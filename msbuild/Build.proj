@@ -113,7 +113,7 @@
 
   <Target Name="_CopyBinariesToArtifactsDirectory" AfterTargets="Build">
     <ItemGroup>
-      <FilesToCopy Include="$(Root)src\**\bin\$(Configuration)\*"/>
+      <FilesToCopy Include="$(Root)msbuild\**\bin\$(Configuration)\*"/>
     </ItemGroup>
     
     <Copy SourceFiles="@(FilesToCopy)" DestinationFolder="$(ArtifactsPath)bin\" />
