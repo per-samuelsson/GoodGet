@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="FullBuild" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  
+  <Import Project="$(MSBuildThisFileDirectory)Starbits.Version.props" />
+  <Import Project="$(MSBuildThisFileDirectory)Starbits.Tasks.targets" />
+  
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
+
+    <!--
+    The solution dir is generally considered the parent directory of the
+    current project, which is the default convention for Visual Studio
+    project/solutions. This project is next to the solution though, so make
+    sure we set if if not set previously, to prevent imported targets/props
+    from assigning it based on the convention.
+    -->
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">$(MSBuildProjectDirectory)\</SolutionDir>
+    <Root>$(MSBuildThisFileDirectory)..\</Root>
+    <BaseArtifactsPath>$(Root)artifacts\</BaseArtifactsPath>
+    <ArtifactsPath>$(BaseArtifactsPath)$(Configuration)\</ArtifactsPath>
+    <PackageOutputPath>$(BaseArtifactsPath)$(Configuration)</PackageOutputPath>
+    
+    <DownloadNuGetExe>true</DownloadNuGetExe>
+    
+    <CommonVersionInfoPath>$([System.IO.Path]::Combine( $(Root), 'msbuild\common\CommonVersionInfo.cs' ))</CommonVersionInfoPath>
+
+    <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' " >11.0</VisualStudioVersion>
+  </PropertyGroup>
+
+  <Import Project="$(MSBuildThisFileDirectory).nuget\NuGet.targets" />
+
+  <ItemGroup>
+    <Solution Include="$(SolutionDir)*.sln">
+      <AdditionalProperties>
+        Configuration=$(Configuration);
+        ArtifactsPath=$(ArtifactsPath);
+        RunCodeAnalysis=false;
+        RestorePackages=false
+      </AdditionalProperties>
+    </Solution>
+
+    <CoreProjects Include="$(Root)\msbuild\src\**\*.csproj" />
+  </ItemGroup>
+
+  <Target Name="FullBuild" DependsOnTargets="Clean; Build; Package" />
+
+  <Target Name="Clean" DependsOnTargets="_CleanSolution; _CleanArtifacts">
+    <MakeDir Directories="$(ArtifactsPath)" Condition=" !Exists('$(ArtifactsPath)') " />
+  </Target>
+
+  <Target Name="Build" DependsOnTargets="RestorePackages; UpdateProjectVersions">
+    <MSBuild Projects="@(Solution)" Targets="Build">
+      <Output TaskParameter="TargetOutputs" ItemName="ProjectAssemblies" />
+    </MSBuild>
+  </Target>
+
+  <Target Name="Package" DependsOnTargets="BuildNuGetPackages" />
+
+  <Target Name="UpdateProjectVersions" DependsOnTargets="BackupCommonVersionInfo">
+    <WriteCodeFragment AssemblyAttributes="@(AssemblyAttributes)" OutputFile="$(CommonVersionInfoPath)" Language="C#" />
+  </Target>
+
+  <Target Name="BackupCommonVersionInfo">
+    <Copy SourceFiles="$(CommonVersionInfoPath)" DestinationFiles="$(CommonVersionInfoPath).bak" />
+  </Target>
+
+  <Target Name="RestoreCommonVersionInfo" AfterTargets="Build" Condition=" Exists('$(CommonVersionInfoPath).bak') ">
+    <Delete Files="$(CommonVersionInfoPath)" Condition=" Exists('$(CommonVersionInfoPath)') " />
+    <Move SourceFiles="$(CommonVersionInfoPath).bak" DestinationFiles="$(CommonVersionInfoPath)" />
+  </Target>
+
+  <PropertyGroup>
+    <NuGetParameters>-Version $(PackageVersion) -Symbols -Verbosity quiet -NoPackageAnalysis -OutputDirectory "$(PackageOutputPath)" -p Configuration=$(Configuration)</NuGetParameters>
+  </PropertyGroup>
+
+  <Target Name="CheckNuGetPrerequisites" DependsOnTargets="CheckPrerequisites"/>
+
+  <Target Name="BuildNuGetPackages" DependsOnTargets="CheckNuGetPrerequisites" Condition="'disabled'!='disabled'">
+    <ItemGroup>
+  	  <!-- Future compatability! :)
+      <NuGetProjects Include="$(Root)src\Starcounter.ErrorCodes\Starcounter.ErrorCodes.csproj" />
+       -->
+    </ItemGroup>
+    <Message Text="Building NuGet packages..." Importance="high" />
+    <Exec Command="&quot;$(NuGetExePath)&quot; pack &quot;%(NuGetProjects.Identity)&quot; $(NuGetParameters)"/>
+  </Target>
+
+  <Target Name="RestorePackages" DependsOnTargets="CheckNuGetPrerequisites">
+    <Message Text="Restoring NuGet packages..." Importance="high" />
+    
+    <ItemGroup>
+      <PackageConfigs Include="$(Root)**\packages.config" Exclude="$(BaseArtifactsPath)**\packages.config" />
+    </ItemGroup>
+
+    <CombinePackageConfigs PackageConfigFiles="@(PackageConfigs)" OutputPath="$(BaseArtifactsPath)packages.config" />
+    
+    <MSBuild Projects="$(NuGetProjectPath)" Targets="RestorePackages"
+             Properties="SolutionDir=$(Root); RestorePackages=true; PackagesConfig=$(BaseArtifactsPath)packages.config" />
+  </Target>
+
+  <Target Name="_CleanSolution">
+    <MSBuild Projects="@(Solution)" Targets="Clean" BuildInParallel="true" />
+  </Target>
+  
+  <Target Name="_CleanArtifacts">
+    <ItemGroup>
+      <ArtifactsToDelete Include="$(ArtifactsPath)**\*" />
+    </ItemGroup>
+    
+    <Delete Files="@(ArtifactsToDelete)" />
+    <RemoveDir Directories="$(ArtifactsPath)" Condition=" Exists('$(ArtifactsPath)') " ContinueOnError="true"/>
+  </Target>
+
+  <Target Name="_CopyBinariesToArtifactsDirectory" AfterTargets="Build">
+    <ItemGroup>
+      <FilesToCopy Include="$(Root)src\**\bin\$(Configuration)\*"/>
+    </ItemGroup>
+    
+    <Copy SourceFiles="@(FilesToCopy)" DestinationFolder="$(ArtifactsPath)bin\" />
+  </Target>
+  
+</Project>

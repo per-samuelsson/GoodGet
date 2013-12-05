@@ -96,6 +96,12 @@ publish/
 *.Publish.xml
 *.pubxml
 
+# NuGet / StarGet entries we don't want versioned
+nuget.exe
+
+# Our full artifacts hive
+/artifacts
+
 # NuGet Packages Directory
 ## TODO: If you have NuGet Package Restore enabled, uncomment the next line
 #packages/
