@@ -75,11 +75,9 @@
 
   <Target Name="CheckNuGetPrerequisites" DependsOnTargets="CheckPrerequisites"/>
 
-  <Target Name="BuildNuGetPackages" DependsOnTargets="CheckNuGetPrerequisites" Condition="'disabled'!='disabled'">
+  <Target Name="BuildNuGetPackages" DependsOnTargets="CheckNuGetPrerequisites">
     <ItemGroup>
-  	  <!-- Future compatability! :)
-      <NuGetProjects Include="$(Root)src\Starcounter.ErrorCodes\Starcounter.ErrorCodes.csproj" />
-       -->
+      <NuGetProjects Include="$(Root)msbuild\Starcounter.ErrorCodes\Starcounter.ErrorCodes.csproj" />
     </ItemGroup>
     <Message Text="Building NuGet packages..." Importance="high" />
     <Exec Command="&quot;$(NuGetExePath)&quot; pack &quot;%(NuGetProjects.Identity)&quot; $(NuGetParameters)"/>
