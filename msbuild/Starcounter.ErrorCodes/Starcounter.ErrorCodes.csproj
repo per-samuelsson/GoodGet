@@ -59,6 +59,9 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>$(ProjectDir)..\ErrorCodeCompiler\bin\$(Configuration)\ErrorCodeCompiler.exe $(ProjectDir)errorcodes.xml -orangeintcs $(ProjectDir)Error.cs</PreBuildEvent>
+  	<ErrorCodeCompilerPath>$(ProjectDir)..\ErrorCodeCompiler\bin\$(Configuration)\</ErrorCodeCompilerPath>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>$(ErrorCodeCompilerPath)ErrorCodeCompiler.exe $(ProjectDir)errorcodes.xml -orangeintcs $(ProjectDir)Error.cs</PreBuildEvent>
   </PropertyGroup>
 </Project>
