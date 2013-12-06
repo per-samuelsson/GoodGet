@@ -111,8 +111,12 @@
 
   <Target Name="_CopyBinariesToArtifactsDirectory" AfterTargets="Build">
     <ItemGroup>
-      <FilesToCopy Include="$(Root)msbuild\**\bin\$(Configuration)\*"/>
-      <FilesToCopy32 Include="$(Root)msbuild\**\bin\$(Configuration)\32BitComponents\*"/>
+      <FilesToCopy Include="$(Root)msbuild\**\bin\$(Configuration)\*.dll"/>
+      <FilesToCopy Include="$(Root)msbuild\**\bin\$(Configuration)\*.pdb"/>
+      <FilesToCopy Include="$(Root)msbuild\**\bin\$(Configuration)\*.exe"/>
+      <FilesToCopy32 Include="$(Root)msbuild\**\bin\$(Configuration)\32BitComponents\*.dll"/>
+      <FilesToCopy32 Include="$(Root)msbuild\**\bin\$(Configuration)\32BitComponents\*.pdb"/>
+      <FilesToCopy32 Include="$(Root)msbuild\**\bin\$(Configuration)\32BitComponents\*.exe"/>
     </ItemGroup>
     
     <Copy SourceFiles="@(FilesToCopy)" DestinationFolder="$(ArtifactsPath)bin\" />
