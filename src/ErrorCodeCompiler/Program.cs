@@ -1,142 +1,118 @@
 ﻿
+using Starcounter.Errors;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Xml;
-using System.Globalization;
-using System.Web;
-using System.Diagnostics;
 using System.Text.RegularExpressions;
-using Starcounter.Errors;
+using System.Web;
+using System.Xml;
 
-namespace ErrorCodeCompiler
-{
+namespace ErrorCodeCompiler {
 
-class Program
-{
-    private static readonly Regex MultipleWhitespace = new Regex(@"\s+");
+    class Program {
+        private static readonly Regex MultipleWhitespace = new Regex(@"\s+");
 
-    private static bool verbose = false;
+        private static bool verbose = false;
 
-    public static void Verbose(string s)
-    {
-        if (verbose)
-        {
-            Trace.TraceInformation(s);
-            Console.Error.WriteLine("VERBOSE: {0}", s);
-        }
-    }
-    public static void Verbose(string fmt, params object[] args)
-    {
-        if (verbose)
-        {
-            Trace.TraceInformation(fmt, args);
-            Console.Error.WriteLine("VERBOSE: " + fmt, args);
-        }
-    }
-
-    static void Main(string[] args)
-    {
-        Stream instream = null;
-        TextWriter csfile = null;
-        TextWriter orangestdcsfile = null;
-        TextWriter orangeintcsfile = null;
-        TextWriter mcfile = null;
-        TextWriter exceptionAssistantContentFile = null;
-
-        try
-        {
-            verbose = args.Any(str => str == "-v");
-            CommandLine.ParseArgs(args, ref instream, ref csfile, ref orangestdcsfile, ref orangeintcsfile, ref mcfile, ref exceptionAssistantContentFile);
-            bool anythingDone = false;
-            
-            IList<ErrorCode> allCodes = ErrorFileReader.ReadErrorCodes(instream).ErrorCodes;
-            
-            if (mcfile != null)
-            {
-                Verbose("Writing MC file...");
-                anythingDone = true;
-                WriteMcFile(allCodes, mcfile);
-                mcfile.Flush();
-                if (mcfile != Console.Out)
-                {
-                    mcfile.Close();
-                }
-                Verbose("MC file written.");
-            }
-            if (csfile != null)
-            {
-                Verbose("Writing C# file...");
-                anythingDone = true;
-                WriteCSharpFile(allCodes, csfile);
-                csfile.Flush();
-                if (csfile != Console.Out)
-                {
-                    csfile.Close();
-                }
-                Verbose("C# file written.");
-            }
-            if (orangestdcsfile != null)
-            {
-                Verbose("Writing C# file...");
-                anythingDone = true;
-                WriteCSharpFile2(allCodes, orangestdcsfile, "Starcounter");
-                orangestdcsfile.Flush();
-                if (orangestdcsfile != Console.Out)
-                {
-                    orangestdcsfile.Close();
-                }
-                Verbose("C# file written.");
-            }
-            if (orangeintcsfile != null)
-            {
-                Verbose("Writing C# file...");
-                anythingDone = true;
-                WriteCSharpFile2(allCodes, orangeintcsfile, "Starcounter.Internal");
-                orangeintcsfile.Flush();
-                if (orangeintcsfile != Console.Out)
-                {
-                    orangeintcsfile.Close();
-                }
-                Verbose("C# file written.");
-            }
-            if (exceptionAssistantContentFile != null)
-            {
-                Verbose("Writing Exception assistant content file...");
-                anythingDone = true;
-                WriteExceptionAssistantContentFile(allCodes, exceptionAssistantContentFile);
-                Verbose("ExceptionAssistantContentFile file written.");
-            }
-
-            if (!anythingDone)
-            {
-                Verbose("No actions taken");
-            }
-            else
-            {
-                Verbose("All actions performed successfully");
+        public static void Verbose(string s) {
+            if (verbose) {
+                Trace.TraceInformation(s);
+                Console.Error.WriteLine("VERBOSE: {0}", s);
             }
         }
-        catch (Exception e)
-        {
-            Die("Exception occurred: " + e);
+        public static void Verbose(string fmt, params object[] args) {
+            if (verbose) {
+                Trace.TraceInformation(fmt, args);
+                Console.Error.WriteLine("VERBOSE: " + fmt, args);
+            }
         }
-    }
 
-    private static void WriteMcFile(IEnumerable<ErrorCode> allCodes, TextWriter writer)
-    {
-//        const string Indent = "    ";
-        // write header
-        writer.WriteLine(";#pragma once");
-        writer.WriteLine(";/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *");
-        writer.WriteLine("; *");
-        writer.WriteLine("; * THIS FILE IS AUTOMATICALLY GENERATED. DO NOT EDIT.");
-        writer.WriteLine("; *");
-        writer.WriteLine("; */");
-//        writer.WriteLine("OutputBase=16");
-        writer.WriteLine("OutputBase=10");
-        writer.WriteLine();
+        static void Main(string[] args) {
+            Stream instream = null;
+            TextWriter csfile = null;
+            TextWriter orangestdcsfile = null;
+            TextWriter orangeintcsfile = null;
+            TextWriter mcfile = null;
+            TextWriter exceptionAssistantContentFile = null;
+
+            try {
+                verbose = args.Any(str => str == "-v");
+                CommandLine.ParseArgs(args, ref instream, ref csfile, ref orangestdcsfile, ref orangeintcsfile, ref mcfile, ref exceptionAssistantContentFile);
+                bool anythingDone = false;
+
+                IList<ErrorCode> allCodes = ErrorFileReader.ReadErrorCodes(instream).ErrorCodes;
+
+                if (mcfile != null) {
+                    Verbose("Writing MC file...");
+                    anythingDone = true;
+                    WriteMcFile(allCodes, mcfile);
+                    mcfile.Flush();
+                    if (mcfile != Console.Out) {
+                        mcfile.Close();
+                    }
+                    Verbose("MC file written.");
+                }
+                if (csfile != null) {
+                    Verbose("Writing C# file...");
+                    anythingDone = true;
+                    WriteCSharpFile(allCodes, csfile);
+                    csfile.Flush();
+                    if (csfile != Console.Out) {
+                        csfile.Close();
+                    }
+                    Verbose("C# file written.");
+                }
+                if (orangestdcsfile != null) {
+                    Verbose("Writing C# file...");
+                    anythingDone = true;
+                    WriteCSharpFile2(allCodes, orangestdcsfile, "Starcounter");
+                    orangestdcsfile.Flush();
+                    if (orangestdcsfile != Console.Out) {
+                        orangestdcsfile.Close();
+                    }
+                    Verbose("C# file written.");
+                }
+                if (orangeintcsfile != null) {
+                    Verbose("Writing C# file...");
+                    anythingDone = true;
+                    WriteCSharpFile2(allCodes, orangeintcsfile, "Starcounter.Internal");
+                    orangeintcsfile.Flush();
+                    if (orangeintcsfile != Console.Out) {
+                        orangeintcsfile.Close();
+                    }
+                    Verbose("C# file written.");
+                }
+                if (exceptionAssistantContentFile != null) {
+                    Verbose("Writing Exception assistant content file...");
+                    anythingDone = true;
+                    WriteExceptionAssistantContentFile(allCodes, exceptionAssistantContentFile);
+                    Verbose("ExceptionAssistantContentFile file written.");
+                }
+
+                if (!anythingDone) {
+                    Verbose("No actions taken");
+                } else {
+                    Verbose("All actions performed successfully");
+                }
+            } catch (Exception e) {
+                Exit("Exception occurred: " + e);
+            }
+        }
+
+        private static void WriteMcFile(IEnumerable<ErrorCode> allCodes, TextWriter writer) {
+            //        const string Indent = "    ";
+            // write header
+            writer.WriteLine(";#pragma once");
+            writer.WriteLine(";/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *");
+            writer.WriteLine("; *");
+            writer.WriteLine("; * THIS FILE IS AUTOMATICALLY GENERATED. DO NOT EDIT.");
+            writer.WriteLine("; *");
+            writer.WriteLine("; */");
+            //        writer.WriteLine("OutputBase=16");
+            writer.WriteLine("OutputBase=10");
+            writer.WriteLine();
 #if false
         // write severity names (we use default severities, but it's better to be a bit verbose)
         writer.WriteLine("SeverityNames=(");
@@ -163,123 +139,113 @@ class Program
         writer.WriteLine(")");
         writer.WriteLine();
 #endif
-        // write messages
-        foreach (ErrorCode ec in allCodes)
-        {
-            foreach (string remparam in ec.RemarkParagraphs)
-            {
-                writer.WriteLine(";// {0}", remparam);
-            }
-//            writer.WriteLine("MessageId    = 0x{0:X}", ec.Code);
-            writer.WriteLine("MessageId    = {0}", ec.CodeWithFacility);
-//            writer.WriteLine("Facility     = {0}", ec.Facility.Name);
-            writer.WriteLine("SymbolicName = {0}", ec.ConstantName);
-            writer.WriteLine("Language     = English");
-//            writer.WriteLine("{0} (0x{1:X}): {2}%0", ec.Name, ec.CodeWithFacility, ec.Description);
-            writer.WriteLine("{0} ({1}): {2}%0", ec.Name, String.Concat("SCERR", ec.CodeWithFacility), ec.Description);
-            writer.WriteLine(".");
-            writer.WriteLine();
-        }
-    }
-
-    private static void WriteCSharpFile(IEnumerable<ErrorCode> allCodes, TextWriter writer)
-    {
-        const string Indent = "    ";
-        const string Indent2 = Indent + Indent;
-        const string Indent3 = Indent2 + Indent;
-
-        // write head
-        writer.WriteLine("/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *");
-        writer.WriteLine(" *");
-        writer.WriteLine(" * THIS FILE IS AUTOMATICALLY GENERATED. DO NOT EDIT.");
-        writer.WriteLine(" *");
-        writer.WriteLine(" */");
-        writer.WriteLine();
-        writer.WriteLine("namespace Sc.Server.Internal");
-        writer.WriteLine("{");
-        writer.WriteLine(Indent + "/// <summary>");
-        writer.WriteLine(Indent + "/// Class Error");
-        writer.WriteLine(Indent + "/// </summary>");
-        writer.WriteLine(Indent + "public static partial class ErrorCode");
-        writer.WriteLine(Indent + "{");
-
-        // Write categories/facilities
-
-        IList<Facility> facilitesWritten;
-        
-        facilitesWritten = new List<Facility>();
-        writer.WriteLine(Indent2 + "public enum Category");
-        writer.WriteLine(Indent2 + "{");
-
-        foreach (ErrorCode ec in allCodes)
-        {
-            if (facilitesWritten.Contains(ec.Facility))
-                continue;
-
-            facilitesWritten.Add(ec.Facility);
-            writer.WriteLine("{0}{1} = {2},", Indent3, ec.Facility.Name, ec.Facility.Code * 1000);
-        }
-
-        writer.WriteLine(Indent2 + "}");
-        writer.WriteLine();
-
-        // write error codes
-        foreach (ErrorCode ec in allCodes)
-        {
-            writer.WriteLine(Indent2 + "/// <summary> ");
-            writer.Write(Indent2 + "/// ");
-            HttpUtility.HtmlEncode(ec.Description, writer);
-            writer.WriteLine();
-            writer.WriteLine(Indent2 + "/// </summary>");
-            if (ec.RemarkParagraphs.Count == 1)
-            {
-                writer.WriteLine(Indent2 + "/// <remarks>");
-                writer.Write(Indent2 + "/// ");
-                HttpUtility.HtmlEncode(ec.RemarkParagraphs[0], writer);
-                writer.WriteLine();
-                writer.WriteLine(Indent2 + "/// </remarks>");
-            }
-            else if (ec.RemarkParagraphs.Count > 1)
-            {
-                writer.WriteLine(Indent2 + "/// <remarks>");
-                foreach (string remark in ec.RemarkParagraphs)
-                {
-                    writer.Write(Indent2 + "/// <para>");
-                    HttpUtility.HtmlEncode(remark, writer);
-                    writer.WriteLine(" </para>");
+            // write messages
+            foreach (ErrorCode ec in allCodes) {
+                foreach (string remparam in ec.RemarkParagraphs) {
+                    writer.WriteLine(";// {0}", remparam);
                 }
-                writer.WriteLine(Indent2 + "/// </remarks>");
+                //            writer.WriteLine("MessageId    = 0x{0:X}", ec.Code);
+                writer.WriteLine("MessageId    = {0}", ec.CodeWithFacility);
+                //            writer.WriteLine("Facility     = {0}", ec.Facility.Name);
+                writer.WriteLine("SymbolicName = {0}", ec.ConstantName);
+                writer.WriteLine("Language     = English");
+                //            writer.WriteLine("{0} (0x{1:X}): {2}%0", ec.Name, ec.CodeWithFacility, ec.Description);
+                writer.WriteLine("{0} ({1}): {2}%0", ec.Name, String.Concat("SCERR", ec.CodeWithFacility), ec.Description);
+                writer.WriteLine(".");
+                writer.WriteLine();
             }
-//            writer.WriteLine(Indent2 + "public const uint {0} = 0x{1:X};", ec.Name, ec.CodeWithFacility);
-            writer.WriteLine(Indent2 + "public const uint {0} = {1};", ec.ConstantName, ec.CodeWithFacility);
         }
-        // write end
-        writer.WriteLine(Indent + "}");
-        writer.WriteLine("}");
-    }
 
-    private static void WriteCSharpFile2(IEnumerable<ErrorCode> allCodes, TextWriter writer, string namespaceString)
-    {
-        const string Indent = "    ";
-        const string Indent2 = Indent + Indent;
-//        const string Indent3 = Indent2 + Indent;
+        private static void WriteCSharpFile(IEnumerable<ErrorCode> allCodes, TextWriter writer) {
+            const string Indent = "    ";
+            const string Indent2 = Indent + Indent;
+            const string Indent3 = Indent2 + Indent;
 
-        // write head
-        writer.WriteLine("/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *");
-        writer.WriteLine(" *");
-        writer.WriteLine(" * THIS FILE IS AUTOMATICALLY GENERATED. DO NOT EDIT.");
-        writer.WriteLine(" *");
-        writer.WriteLine(" */");
-        writer.WriteLine();
-        writer.WriteLine(string.Concat("namespace ", namespaceString));
-        writer.WriteLine("{");
-        writer.WriteLine(Indent + "/// <summary>");
-        writer.WriteLine(Indent + "/// Class Error");
-        writer.WriteLine(Indent + "/// </summary>");
-        writer.WriteLine(Indent + "public static partial class Error");
-        writer.WriteLine(Indent + "{");
+            // write head
+            writer.WriteLine("/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *");
+            writer.WriteLine(" *");
+            writer.WriteLine(" * THIS FILE IS AUTOMATICALLY GENERATED. DO NOT EDIT.");
+            writer.WriteLine(" *");
+            writer.WriteLine(" */");
+            writer.WriteLine();
+            writer.WriteLine("namespace Sc.Server.Internal");
+            writer.WriteLine("{");
+            writer.WriteLine(Indent + "/// <summary>");
+            writer.WriteLine(Indent + "/// Class Error");
+            writer.WriteLine(Indent + "/// </summary>");
+            writer.WriteLine(Indent + "public static partial class ErrorCode");
+            writer.WriteLine(Indent + "{");
 
-        // Write categories/facilities
+            // Write categories/facilities
+
+            IList<Facility> facilitesWritten;
+
+            facilitesWritten = new List<Facility>();
+            writer.WriteLine(Indent2 + "public enum Category");
+            writer.WriteLine(Indent2 + "{");
+
+            foreach (ErrorCode ec in allCodes) {
+                if (facilitesWritten.Contains(ec.Facility))
+                    continue;
+
+                facilitesWritten.Add(ec.Facility);
+                writer.WriteLine("{0}{1} = {2},", Indent3, ec.Facility.Name, ec.Facility.Code * 1000);
+            }
+
+            writer.WriteLine(Indent2 + "}");
+            writer.WriteLine();
+
+            // write error codes
+            foreach (ErrorCode ec in allCodes) {
+                writer.WriteLine(Indent2 + "/// <summary> ");
+                writer.Write(Indent2 + "/// ");
+                HttpUtility.HtmlEncode(ec.Description, writer);
+                writer.WriteLine();
+                writer.WriteLine(Indent2 + "/// </summary>");
+                if (ec.RemarkParagraphs.Count == 1) {
+                    writer.WriteLine(Indent2 + "/// <remarks>");
+                    writer.Write(Indent2 + "/// ");
+                    HttpUtility.HtmlEncode(ec.RemarkParagraphs[0], writer);
+                    writer.WriteLine();
+                    writer.WriteLine(Indent2 + "/// </remarks>");
+                } else if (ec.RemarkParagraphs.Count > 1) {
+                    writer.WriteLine(Indent2 + "/// <remarks>");
+                    foreach (string remark in ec.RemarkParagraphs) {
+                        writer.Write(Indent2 + "/// <para>");
+                        HttpUtility.HtmlEncode(remark, writer);
+                        writer.WriteLine(" </para>");
+                    }
+                    writer.WriteLine(Indent2 + "/// </remarks>");
+                }
+                //            writer.WriteLine(Indent2 + "public const uint {0} = 0x{1:X};", ec.Name, ec.CodeWithFacility);
+                writer.WriteLine(Indent2 + "public const uint {0} = {1};", ec.ConstantName, ec.CodeWithFacility);
+            }
+            // write end
+            writer.WriteLine(Indent + "}");
+            writer.WriteLine("}");
+        }
+
+        private static void WriteCSharpFile2(IEnumerable<ErrorCode> allCodes, TextWriter writer, string namespaceString) {
+            const string Indent = "    ";
+            const string Indent2 = Indent + Indent;
+            //        const string Indent3 = Indent2 + Indent;
+
+            // write head
+            writer.WriteLine("/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *");
+            writer.WriteLine(" *");
+            writer.WriteLine(" * THIS FILE IS AUTOMATICALLY GENERATED. DO NOT EDIT.");
+            writer.WriteLine(" *");
+            writer.WriteLine(" */");
+            writer.WriteLine();
+            writer.WriteLine(string.Concat("namespace ", namespaceString));
+            writer.WriteLine("{");
+            writer.WriteLine(Indent + "/// <summary>");
+            writer.WriteLine(Indent + "/// Class Error");
+            writer.WriteLine(Indent + "/// </summary>");
+            writer.WriteLine(Indent + "public static partial class Error");
+            writer.WriteLine(Indent + "{");
+
+            // Write categories/facilities
 
 #if false
         IList<Facility> facilitesWritten;
@@ -301,149 +267,79 @@ class Program
         writer.WriteLine();
 #endif
 
-        // write error codes
-        foreach (ErrorCode ec in allCodes)
-        {
-            writer.WriteLine(Indent2 + "/// <summary> ");
-            writer.Write(Indent2 + "/// ");
-            HttpUtility.HtmlEncode(ec.Description, writer);
-            writer.WriteLine();
-            writer.WriteLine(Indent2 + "/// </summary>");
-            if (ec.RemarkParagraphs.Count == 1)
-            {
-                writer.WriteLine(Indent2 + "/// <remarks>");
+            // write error codes
+            foreach (ErrorCode ec in allCodes) {
+                writer.WriteLine(Indent2 + "/// <summary> ");
                 writer.Write(Indent2 + "/// ");
-                HttpUtility.HtmlEncode(ec.RemarkParagraphs[0], writer);
+                HttpUtility.HtmlEncode(ec.Description, writer);
                 writer.WriteLine();
-                writer.WriteLine(Indent2 + "/// </remarks>");
-            }
-            else if (ec.RemarkParagraphs.Count > 1)
-            {
-                writer.WriteLine(Indent2 + "/// <remarks>");
-                foreach (string remark in ec.RemarkParagraphs)
-                {
-                    writer.Write(Indent2 + "/// <para>");
-                    HttpUtility.HtmlEncode(remark, writer);
-                    writer.WriteLine(" </para>");
+                writer.WriteLine(Indent2 + "/// </summary>");
+                if (ec.RemarkParagraphs.Count == 1) {
+                    writer.WriteLine(Indent2 + "/// <remarks>");
+                    writer.Write(Indent2 + "/// ");
+                    HttpUtility.HtmlEncode(ec.RemarkParagraphs[0], writer);
+                    writer.WriteLine();
+                    writer.WriteLine(Indent2 + "/// </remarks>");
+                } else if (ec.RemarkParagraphs.Count > 1) {
+                    writer.WriteLine(Indent2 + "/// <remarks>");
+                    foreach (string remark in ec.RemarkParagraphs) {
+                        writer.Write(Indent2 + "/// <para>");
+                        HttpUtility.HtmlEncode(remark, writer);
+                        writer.WriteLine(" </para>");
+                    }
+                    writer.WriteLine(Indent2 + "/// </remarks>");
                 }
-                writer.WriteLine(Indent2 + "/// </remarks>");
+                //            writer.WriteLine(Indent2 + "public const uint {0} = 0x{1:X};", ec.Name, ec.CodeWithFacility);
+                writer.WriteLine(Indent2 + "public const uint {0} = {1};", ec.ConstantName, ec.CodeWithFacility);
             }
-            //            writer.WriteLine(Indent2 + "public const uint {0} = 0x{1:X};", ec.Name, ec.CodeWithFacility);
-            writer.WriteLine(Indent2 + "public const uint {0} = {1};", ec.ConstantName, ec.CodeWithFacility);
+            // write end
+            writer.WriteLine(Indent + "}");
+            writer.WriteLine("}");
         }
-        // write end
-        writer.WriteLine(Indent + "}");
-        writer.WriteLine("}");
-    }
 
-    #region Visual Studio Exception assistant content file writing methods
+        #region Visual Studio Exception assistant content file writing methods
 
-    static void WriteExceptionAssistantContentFile(IEnumerable<ErrorCode> errorCodes, TextWriter outputWriter)
-    {
-        IList<Facility> facilitesWritten;
-        XmlWriterSettings settings;
-        XmlWriter writer;
+        static void WriteExceptionAssistantContentFile(IEnumerable<ErrorCode> errorCodes, TextWriter outputWriter) {
+            IList<Facility> facilitesWritten;
+            XmlWriterSettings settings;
+            XmlWriter writer;
 
-        facilitesWritten = new List<Facility>();
-        settings = new XmlWriterSettings();
-        settings.Indent = true;
-        writer = XmlWriter.Create(outputWriter, settings);
+            facilitesWritten = new List<Facility>();
+            settings = new XmlWriterSettings();
+            settings.Indent = true;
+            writer = XmlWriter.Create(outputWriter, settings);
 
-        writer.WriteStartElement("AssistantContent", "urn:schemas-microsoft-com:xml-msdata:exception-assistant-content");
-        writer.WriteAttributeString("Version", "1.0");
+            writer.WriteStartElement("AssistantContent", "urn:schemas-microsoft-com:xml-msdata:exception-assistant-content");
+            writer.WriteAttributeString("Version", "1.0");
 
-        writer.WriteStartElement("ContentInfo");
-        writer.WriteElementString("ContentName", "Starcounter help content");
-        writer.WriteElementString("ContentID", "urn:exception-content-microsoft-com:visual-studio-7-default-content");
-        writer.WriteElementString("ContentFileVersion", "1.0");
-        writer.WriteElementString("ContentAuthor", "Starcounter");
-        writer.WriteElementString("ContentComment", "Starcounter-specific Exception Assistant Content for Visual Studio 10.0.");
-        writer.WriteEndElement();
+            writer.WriteStartElement("ContentInfo");
+            writer.WriteElementString("ContentName", "Starcounter help content");
+            writer.WriteElementString("ContentID", "urn:exception-content-microsoft-com:visual-studio-7-default-content");
+            writer.WriteElementString("ContentFileVersion", "1.0");
+            writer.WriteElementString("ContentAuthor", "Starcounter");
+            writer.WriteElementString("ContentComment", "Starcounter-specific Exception Assistant Content for Visual Studio 10.0.");
+            writer.WriteEndElement();
 
-        // The first version included links to category summary pages,
-        // one per error code category.
-        //foreach (var errorCode in errorCodes)
-        //{
-        //    WriteErrorCodeContentAllExceptionsOnePerFacility(writer, facilitesWritten, errorCode);
-        //}
+            // The first version included links to category summary pages,
+            // one per error code category.
+            //foreach (var errorCode in errorCodes)
+            //{
+            //    WriteErrorCodeContentAllExceptionsOnePerFacility(writer, facilitesWritten, errorCode);
+            //}
 
-        // The second version includes just a link to report the
-        // exception (from a wiki page) and a link for general troubleshooting.
-        WriteErrorCodeContentSimplestForm(writer);
+            // The second version includes just a link to report the
+            // exception (from a wiki page) and a link for general troubleshooting.
+            WriteErrorCodeContentSimplestForm(writer);
 
-        writer.WriteEndElement();
+            writer.WriteEndElement();
 
-        writer.Flush();
-        writer.Close();
-    }
+            writer.Flush();
+            writer.Close();
+        }
 
-    static void WriteErrorCodeContentSimplestForm(XmlWriter writer)
-    {
-        string precondition;
+        static void WriteErrorCodeContentSimplestForm(XmlWriter writer) {
+            string precondition;
 
-        precondition = "Message~\"SCERR\"";
-
-        writer.WriteStartElement("Exception");
-        writer.WriteElementString("Type", "*");
-        writer.WriteElementString("Precondition", precondition);
-
-        writer.WriteStartElement("Tip");
-        writer.WriteAttributeString("HelpID", "http://www.starcounter.com/wiki/ReportExceptionFromVSAssistant");
-        writer.WriteElementString("Description", "Tell Starcounter about this exception.");
-        writer.WriteEndElement();
-
-        writer.WriteEndElement();
-
-        writer.WriteStartElement("Exception");
-        writer.WriteElementString("Type", "*");
-        writer.WriteElementString("Precondition", precondition);
-
-        writer.WriteStartElement("Tip");
-        writer.WriteAttributeString("HelpID", "http://www.starcounter.com/wiki/TroubleshootingHelpFromVSAssistant");
-        writer.WriteElementString("Description", "See Starcounter troubleshooting tips.");
-        writer.WriteEndElement();
-
-        writer.WriteEndElement();
-
-        precondition = "InnerException.Message~\"SCERR\"";
-
-        writer.WriteStartElement("Exception");
-        writer.WriteElementString("Type", "*");
-        writer.WriteElementString("Precondition", precondition);
-
-        writer.WriteStartElement("Tip");
-        writer.WriteAttributeString("HelpID", "http://www.starcounter.com/wiki/ReportExceptionFromVSAssistant");
-        writer.WriteElementString("Description", "Tell Starcounter about this exception.");
-        writer.WriteEndElement();
-
-        writer.WriteEndElement();
-
-        writer.WriteStartElement("Exception");
-        writer.WriteElementString("Type", "*");
-        writer.WriteElementString("Precondition", precondition);
-
-        writer.WriteStartElement("Tip");
-        writer.WriteAttributeString("HelpID", "http://www.starcounter.com/wiki/TroubleshootingHelpFromVSAssistant");
-        writer.WriteElementString("Description", "See Starcounter troubleshooting tips.");
-        writer.WriteEndElement();
-
-        writer.WriteEndElement();
-    }
-
-    static void WriteErrorCodeContentAllExceptionsOnePerFacility(
-        XmlWriter writer,
-        IList<Facility> facilitesWritten,
-        ErrorCode code)
-    {
-        string precondition;
-
-        if (facilitesWritten.Contains(code.Facility))
-            return;
-
-        facilitesWritten.Add(code.Facility);
-
-        if (code.Facility.Code == 0)
-        {
             precondition = "Message~\"SCERR\"";
 
             writer.WriteStartElement("Exception");
@@ -451,8 +347,19 @@ class Program
             writer.WriteElementString("Precondition", precondition);
 
             writer.WriteStartElement("Tip");
-            writer.WriteAttributeString("HelpID", "http://www.starcounter.com/forum/search.php?query=[Enter error code here, for example SCERR1234]");
-            writer.WriteElementString("Description", "Search Starcounter forums for this error (for example \"SCERR1234\").");
+            writer.WriteAttributeString("HelpID", "http://www.starcounter.com/wiki/ReportExceptionFromVSAssistant");
+            writer.WriteElementString("Description", "Tell Starcounter about this exception.");
+            writer.WriteEndElement();
+
+            writer.WriteEndElement();
+
+            writer.WriteStartElement("Exception");
+            writer.WriteElementString("Type", "*");
+            writer.WriteElementString("Precondition", precondition);
+
+            writer.WriteStartElement("Tip");
+            writer.WriteAttributeString("HelpID", "http://www.starcounter.com/wiki/TroubleshootingHelpFromVSAssistant");
+            writer.WriteElementString("Description", "See Starcounter troubleshooting tips.");
             writer.WriteEndElement();
 
             writer.WriteEndElement();
@@ -464,47 +371,96 @@ class Program
             writer.WriteElementString("Precondition", precondition);
 
             writer.WriteStartElement("Tip");
-            writer.WriteAttributeString("HelpID", "http://www.starcounter.com/forum/search.php?query=[Enter error code here, for example SCERR1234]");
-            writer.WriteElementString("Description", "Search Starcounter forums for this error (for example \"SCERR1234\").");
+            writer.WriteAttributeString("HelpID", "http://www.starcounter.com/wiki/ReportExceptionFromVSAssistant");
+            writer.WriteElementString("Description", "Tell Starcounter about this exception.");
+            writer.WriteEndElement();
+
+            writer.WriteEndElement();
+
+            writer.WriteStartElement("Exception");
+            writer.WriteElementString("Type", "*");
+            writer.WriteElementString("Precondition", precondition);
+
+            writer.WriteStartElement("Tip");
+            writer.WriteAttributeString("HelpID", "http://www.starcounter.com/wiki/TroubleshootingHelpFromVSAssistant");
+            writer.WriteElementString("Description", "See Starcounter troubleshooting tips.");
             writer.WriteEndElement();
 
             writer.WriteEndElement();
         }
 
-        precondition = string.Format("Source=\"Starcounter({0})\"", code.Facility.Name);
+        static void WriteErrorCodeContentAllExceptionsOnePerFacility(
+            XmlWriter writer,
+            IList<Facility> facilitesWritten,
+            ErrorCode code) {
+            string precondition;
 
-        writer.WriteStartElement("Exception");
-        writer.WriteElementString("Type", "*");
-        writer.WriteElementString("Precondition", precondition);
+            if (facilitesWritten.Contains(code.Facility))
+                return;
 
-        writer.WriteStartElement("Tip");
-        writer.WriteAttributeString("HelpID", string.Format("http://www.starcounter.com/wiki/SCERR{0}", code.Facility.Name));
-        writer.WriteElementString("Description", string.Format("Go to the Starcounter '{0}' category help page.", code.Facility.Name));
-        writer.WriteEndElement();
+            facilitesWritten.Add(code.Facility);
 
-        writer.WriteEndElement();
+            if (code.Facility.Code == 0) {
+                precondition = "Message~\"SCERR\"";
 
-        precondition = string.Format("InnerException.Source=\"Starcounter({0})\"", code.Facility.Name);
+                writer.WriteStartElement("Exception");
+                writer.WriteElementString("Type", "*");
+                writer.WriteElementString("Precondition", precondition);
 
-        writer.WriteStartElement("Exception");
-        writer.WriteElementString("Type", "*");
-        writer.WriteElementString("Precondition", precondition);
+                writer.WriteStartElement("Tip");
+                writer.WriteAttributeString("HelpID", "http://www.starcounter.com/forum/search.php?query=[Enter error code here, for example SCERR1234]");
+                writer.WriteElementString("Description", "Search Starcounter forums for this error (for example \"SCERR1234\").");
+                writer.WriteEndElement();
 
-        writer.WriteStartElement("Tip");
-        writer.WriteAttributeString("HelpID", string.Format("http://www.starcounter.com/wiki/SCERR{0}", code.Facility.Name));
-        writer.WriteElementString("Description", string.Format("Go to the Starcounter '{0}' category help page.", code.Facility.Name));
-        writer.WriteEndElement();
+                writer.WriteEndElement();
 
-        writer.WriteEndElement();
+                precondition = "InnerException.Message~\"SCERR\"";
+
+                writer.WriteStartElement("Exception");
+                writer.WriteElementString("Type", "*");
+                writer.WriteElementString("Precondition", precondition);
+
+                writer.WriteStartElement("Tip");
+                writer.WriteAttributeString("HelpID", "http://www.starcounter.com/forum/search.php?query=[Enter error code here, for example SCERR1234]");
+                writer.WriteElementString("Description", "Search Starcounter forums for this error (for example \"SCERR1234\").");
+                writer.WriteEndElement();
+
+                writer.WriteEndElement();
+            }
+
+            precondition = string.Format("Source=\"Starcounter({0})\"", code.Facility.Name);
+
+            writer.WriteStartElement("Exception");
+            writer.WriteElementString("Type", "*");
+            writer.WriteElementString("Precondition", precondition);
+
+            writer.WriteStartElement("Tip");
+            writer.WriteAttributeString("HelpID", string.Format("http://www.starcounter.com/wiki/SCERR{0}", code.Facility.Name));
+            writer.WriteElementString("Description", string.Format("Go to the Starcounter '{0}' category help page.", code.Facility.Name));
+            writer.WriteEndElement();
+
+            writer.WriteEndElement();
+
+            precondition = string.Format("InnerException.Source=\"Starcounter({0})\"", code.Facility.Name);
+
+            writer.WriteStartElement("Exception");
+            writer.WriteElementString("Type", "*");
+            writer.WriteElementString("Precondition", precondition);
+
+            writer.WriteStartElement("Tip");
+            writer.WriteAttributeString("HelpID", string.Format("http://www.starcounter.com/wiki/SCERR{0}", code.Facility.Name));
+            writer.WriteElementString("Description", string.Format("Go to the Starcounter '{0}' category help page.", code.Facility.Name));
+            writer.WriteEndElement();
+
+            writer.WriteEndElement();
+        }
+
+        #endregion
+
+        public static void Exit(string msg) {
+            Trace.TraceError(msg);
+            Console.Error.WriteLine(msg);
+            Environment.Exit(1);
+        }
     }
-
-    #endregion
-
-    public static void Die(string msg)
-    {
-        Trace.TraceError(msg);
-        Console.Error.WriteLine(msg);
-        Environment.Exit(1);
-    }
-}
 }
