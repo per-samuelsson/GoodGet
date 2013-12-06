@@ -3,6 +3,7 @@
 
 #Ignore files specific to this repo
 msbuild/Starcounter.ErrorCodes/Error.cs
+msbuild/scerrres/scerrres.h
 
 # User-specific files
 *.suo
