@@ -112,9 +112,11 @@
   <Target Name="_CopyBinariesToArtifactsDirectory" AfterTargets="Build">
     <ItemGroup>
       <FilesToCopy Include="$(Root)msbuild\**\bin\$(Configuration)\*"/>
+      <FilesToCopy32 Include="$(Root)msbuild\**\bin\$(Configuration)\32BitComponents\*"/>
     </ItemGroup>
     
     <Copy SourceFiles="@(FilesToCopy)" DestinationFolder="$(ArtifactsPath)bin\" />
+    <Copy SourceFiles="@(FilesToCopy32)" DestinationFolder="$(ArtifactsPath)bin\32BitComponents" />
   </Target>
   
 </Project>
