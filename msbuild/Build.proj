@@ -75,7 +75,7 @@
 
   <Target Name="CheckNuGetPrerequisites" DependsOnTargets="CheckPrerequisites"/>
 
-  <Target Name="BuildNuGetPackages" DependsOnTargets="CheckNuGetPrerequisites">
+  <Target Name="BuildNuGetPackages" DependsOnTargets="CheckNuGetPrerequisites" Condition=" '$(Configuration)' == 'Release' ">
     <ItemGroup>
       <NuGetProjects Include="$(Root)msbuild\Starcounter.ErrorCodes\Starcounter.ErrorCodes.csproj" />
     </ItemGroup>
