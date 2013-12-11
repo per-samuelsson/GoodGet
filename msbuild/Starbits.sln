@@ -29,6 +29,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{C96EAD2E-B0C3-43B3-B46F-DA4B12EE40C9}"
 	ProjectSection(SolutionItems) = preProject
 		Build.proj = Build.proj
+		Starbits.Base.props = Starbits.Base.props
+		Starbits.Tasks.targets = Starbits.Tasks.targets
+		Starbits.Version.props = Starbits.Version.props
 	EndProjectSection
 EndProject
 Global
