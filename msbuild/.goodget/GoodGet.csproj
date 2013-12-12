@@ -14,10 +14,14 @@
     <NuGetCommand Condition=" '$(OS)' == 'Windows_NT'">"$(NuGetExePath)"</NuGetCommand>
     <NuGetCommand Condition=" '$(OS)' != 'Windows_NT' ">mono --runtime=v4.0.30319 $(NuGetExePath)</NuGetCommand>
   </PropertyGroup>
+  <ItemGroup Condition=" '$(PackageSources)' == '' ">
+    <PackageSource Include="https://www.nuget.org/api/v2/" />
+    <PackageSource Include="https://www.myget.org/F/starcounter/" />
+  </ItemGroup>
   <PropertyGroup>
     <PackageOutputDirectory Condition=" '$(PackageOutputDirectory)' == '' ">$(MSBuildProjectDirectory)\packages</PackageOutputDirectory>
     <RestoreExcludingVersion>true</RestoreExcludingVersion>
-	<RestorePrereleasePackages>true</RestorePrereleasePackages>
+    <RestorePrereleasePackages>true</RestorePrereleasePackages>
   </PropertyGroup>
   <ItemGroup>
     <None Include="packages.goodget.config">
@@ -33,10 +37,11 @@
   </PropertyGroup>
   <Target Name="RestorePackages" DependsOnTargets="CheckPrerequisites">
     <PropertyGroup>
+      <PackageSources Condition=" $(PackageSources) == '' ">@(PackageSource)</PackageSources>
       <PackageConfigFile>$(OutputPath)packages.config</PackageConfigFile>
       <ExcludeVersionSwitch Condition=" $(RestoreExcludingVersion) == 'true' ">-ExcludeVersion</ExcludeVersionSwitch>
-	  <RestorePrereleaseSwitch Condition=" $(RestorePrereleasePackages) == 'true' ">-Prerelease</RestorePrereleaseSwitch>
-      <RestoreCommand>$(NuGetCommand) install $(PackageConfigFile) -OutputDirectory $(PackageOutputDirectory) -NonInteractive $(RestorePrereleaseSwitch) $(ExcludeVersionSwitch)</RestoreCommand>
+      <RestorePrereleaseSwitch Condition=" $(RestorePrereleasePackages) == 'true' ">-Prerelease</RestorePrereleaseSwitch>
+      <RestoreCommand>$(NuGetCommand) install -source "$(PackageSources)" $(PackageConfigFile) -OutputDirectory $(PackageOutputDirectory) -NonInteractive $(RestorePrereleaseSwitch) $(ExcludeVersionSwitch)</RestoreCommand>
     </PropertyGroup>
     <Copy SourceFiles="packages.goodget.config" DestinationFiles="$(PackageConfigFile)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
     <Exec Command="$(RestoreCommand)" />
