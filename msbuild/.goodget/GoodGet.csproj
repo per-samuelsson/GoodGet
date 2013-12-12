@@ -19,27 +19,26 @@
     <RestoreExcludingVersion>true</RestoreExcludingVersion>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="packages.goodget.config" />
+    <None Include="packages.goodget.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
-  
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  
   <PropertyGroup>
     <BuildDependsOn>
 		RestorePackages;
 		$(BuildDependsOn);
 	  </BuildDependsOn>
   </PropertyGroup>
-  
   <Target Name="RestorePackages" DependsOnTargets="CheckPrerequisites">
-	<PropertyGroup>
-		<PackageConfigFile>$(OutputPath)\packages.config</PackageConfigFile>
-	</PropertyGroup>
-	
-    <Copy SourceFiles="packages.goodget.config" DestinationFiles="$(PackageConfigFile)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
-	
+    <PropertyGroup>
+      <PackageConfigFile>$(OutputPath)packages.config</PackageConfigFile>
+      <ExcludeVersionSwitch Condition=" $(RestoreExcludingVersion) == 'true' ">-ExcludeVersion</ExcludeVersionSwitch>
+      <RestoreCommand>$(NuGetCommand) install $(PackageConfigFile) -OutputDirectory $(PackageOutputDirectory) -NonInteractive $(ExcludeVersionSwitch)</RestoreCommand>
+    </PropertyGroup>
+    <Copy SourceFiles="packages.goodget.config" DestinationFiles="$(PackageConfigFile)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+    <Exec Command="$(RestoreCommand)" />
   </Target>
-  
   <Target Name="CheckPrerequisites">
     <!--
 	Take advantage of MsBuild's build dependency tracking to make sure that we only ever download nuget.exe once.
