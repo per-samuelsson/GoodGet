@@ -15,6 +15,7 @@
     <NuGetCommand Condition=" '$(OS)' != 'Windows_NT' ">mono --runtime=v4.0.30319 $(NuGetExePath)</NuGetCommand>
   </PropertyGroup>
   <PropertyGroup>
+    <PackageOutputDirectory Condition=" '$(PackageOutputDirectory)' == '' ">$(MSBuildProjectDirectory)\packages</PackageOutputDirectory>
     <RestoreExcludingVersion>true</RestoreExcludingVersion>
   </PropertyGroup>
   <ItemGroup>
