@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <OutputPath>bin\dummy\ignored</OutputPath>
+    <ProjectGuid>{40E4104F-0495-4939-8A12-A3FB6D2CDFA4}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AssemblyName>GoodGet-Ignore</AssemblyName>
+    <DebugSymbols>false</DebugSymbols>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <RestoreExcludingVersion>true</RestoreExcludingVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+  	<None Include="packages.goodget.config"/>
+  </ItemGroup>
+
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+
+  <Target Name="AfterBuild">
+  	<!-- Remove the dummy output; but dont fail if not possible -->
+    <Delete Files="$(OutputPath)\$(AssemblyName).dll" TreatErrorsAsWarnings="true"/>
+  </Target>
+
+</Project>
