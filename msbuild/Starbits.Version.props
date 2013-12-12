@@ -15,7 +15,7 @@
 		 are not part of version comparisons, but instead use a sequence we append after the
 		 prerelease name (without any hyphen, dot or plus).
 	-->	 
-    <BuildQuality>alpha</BuildQuality>
+    <BuildQuality>alpha1</BuildQuality>
   </PropertyGroup>
 
   <!-- These are calculated based on the values of the properties above. -->
