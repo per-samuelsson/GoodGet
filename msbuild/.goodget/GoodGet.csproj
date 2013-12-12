@@ -30,7 +30,15 @@
 	  </BuildDependsOn>
   </PropertyGroup>
   
-  <Target Name="RestorePackages" DependsOnTargets="CheckPrerequisites" />
+  <Target Name="RestorePackages" DependsOnTargets="CheckPrerequisites">
+	<PropertyGroup>
+		<PackageConfigFile>$(OutputPath)\packages.config</PackageConfigFile>
+	</PropertyGroup>
+	
+    <Copy SourceFiles="packages.goodget.config" DestinationFiles="$(PackageConfigFile)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
+	
+  </Target>
+  
   <Target Name="CheckPrerequisites">
     <!--
 	Take advantage of MsBuild's build dependency tracking to make sure that we only ever download nuget.exe once.
@@ -71,8 +79,8 @@
     </Task>
   </UsingTask>
   <Target Name="AfterBuild">
-    <!-- Remove the dummy output; but dont fail if not possible -->
-    <Delete Files="$(OutputPath)\$(AssemblyName).dll" TreatErrorsAsWarnings="true" />
-    <Delete Files="$(OutputPath)\packages.config" TreatErrorsAsWarnings="true" />
+    <!-- Remove the dummy/temp output; but dont fail if not possible -->
+    <Delete Files="$(OutputPath)$(AssemblyName).dll" TreatErrorsAsWarnings="true" />
+    <Delete Files="$(OutputPath)packages.config" TreatErrorsAsWarnings="true" />
   </Target>
 </Project>
