@@ -17,6 +17,7 @@
   <PropertyGroup>
     <PackageOutputDirectory Condition=" '$(PackageOutputDirectory)' == '' ">$(MSBuildProjectDirectory)\packages</PackageOutputDirectory>
     <RestoreExcludingVersion>true</RestoreExcludingVersion>
+	<RestorePrereleasePackages>true</RestorePrereleasePackages>
   </PropertyGroup>
   <ItemGroup>
     <None Include="packages.goodget.config">
@@ -34,7 +35,8 @@
     <PropertyGroup>
       <PackageConfigFile>$(OutputPath)packages.config</PackageConfigFile>
       <ExcludeVersionSwitch Condition=" $(RestoreExcludingVersion) == 'true' ">-ExcludeVersion</ExcludeVersionSwitch>
-      <RestoreCommand>$(NuGetCommand) install $(PackageConfigFile) -OutputDirectory $(PackageOutputDirectory) -NonInteractive $(ExcludeVersionSwitch)</RestoreCommand>
+	  <RestorePrereleaseSwitch Condition=" $(RestorePrereleasePackages) == 'true' ">-Prerelease</RestorePrereleaseSwitch>
+      <RestoreCommand>$(NuGetCommand) install $(PackageConfigFile) -OutputDirectory $(PackageOutputDirectory) -NonInteractive $(RestorePrereleaseSwitch) $(ExcludeVersionSwitch)</RestoreCommand>
     </PropertyGroup>
     <Copy SourceFiles="packages.goodget.config" DestinationFiles="$(PackageConfigFile)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
     <Exec Command="$(RestoreCommand)" />
