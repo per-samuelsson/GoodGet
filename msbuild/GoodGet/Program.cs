@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 
@@ -19,7 +20,6 @@ using System.IO;
 // Implementation
 // 1. Just dont do freaking nuget install! (Use update in a shadow directory
 // and keep track of what versions we've got).
-// 2. Hide the nuget console
 // 3. Proper error handling / validation of arguments and context
 
 namespace GoodGet {
@@ -41,10 +41,10 @@ namespace GoodGet {
             }
 
             var watch = Stopwatch.StartNew();
-            Console.WriteLine("Getting {0}...", args[0]);
+            Console.WriteLine("Getting latest {0}...", args[0]);
             Execute(Path.Combine(Environment.CurrentDirectory, "nuget.exe"), args[0], Path.Combine(Environment.CurrentDirectory, "got"));
             watch.Stop();
-            Console.WriteLine("Got in {0}", watch.Elapsed);
+            Console.WriteLine("Got in {0}s", watch.Elapsed.TotalSeconds);
         }
 
         static bool Execute(string nugetCommand, string package, string outputDir) {
@@ -53,10 +53,26 @@ namespace GoodGet {
                 Directory.Delete(existing, true);
             }
 
+            var output = new List<string>();
             var args = string.Format("install {0} -OutputDirectory {1} -NonInteractive -ExcludeVersion -Prerelease", package, outputDir);
-            var p = Process.Start(nugetCommand, args);
-            p.WaitForExit();
-            
+            var start = new ProcessStartInfo(nugetCommand, args) {
+                ErrorDialog = false,
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                RedirectStandardOutput = true
+            };
+
+            var p = new Process() { StartInfo = start };
+            p.OutputDataReceived += (sender, e) => { output.Add(e.Data); };
+
+            // Verbose
+            // Console.WriteLine(p.StartInfo.FileName + " " + p.StartInfo.Arguments);
+            p.Start();
+            p.BeginOutputReadLine();
+            if (!p.HasExited) { 
+                p.WaitForExit(); 
+            }
+
             return p.ExitCode == 0;
         }
     }
