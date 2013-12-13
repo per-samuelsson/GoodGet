@@ -48,6 +48,31 @@ namespace GoodGet {
         }
 
         static bool Execute(string nugetCommand, string package, string outputDir) {
+            // 1) Under "got", keep a ".goodget" folder (hidden)
+            // 2) For every package given, find the latest one in that directory.
+            //    Just sort them based on semantic versioning algorithm.
+            // 3) If a package is not there, install it using nuget install.
+            //    Keep track of it as not being needed to update.
+            // 4) For every package found, record it's current version in
+            //    the 'update'-packages.config.
+            // 5) If we have an 'update'-packages config, we should do an update.
+            //    We save one copy of it, run update, and then compare the one
+            //    that was issued by the update.
+            // 6) Finally, synchronize the .goodget vault with the output folder,
+            //    in where only the latest are to be installed (without version).
+            //    Some strategy is needed to detect what is actually the version
+            //    in the current out (compare time + size to latest in vault)?
+            //
+            // Suggested structure (with default "got" output directory)
+            //
+            // Out \got
+            //       \.goodget  - root of shadow vault
+            //         \got
+            //         tmp.csproj
+            //         packages.config
+            //      Package1
+            //      Package2
+
             var existing = Path.Combine(outputDir, package);
             if (Directory.Exists(existing)) {
                 Directory.Delete(existing, true);
