@@ -25,11 +25,19 @@ namespace GoodGet {
         /// </summary>
         /// <param name="feed">The <see cref="Feed"/> to specify
         /// packages for.</param>
-        public FeedPackages(Feed feed) {
+        /// <param name="packages">Optional packages that can be
+        /// given to initialize the set of packages from the
+        /// specified feed.</param>
+        public FeedPackages(Feed feed, params string[] packages) {
             if (feed == null) {
                 throw new ArgumentNullException("feed");
             }
             Feed = feed;
+            if (packages != null) {
+                foreach (var package in packages) {
+                    Packages.Add(package);
+                }
+            }
         }
     }
 }
