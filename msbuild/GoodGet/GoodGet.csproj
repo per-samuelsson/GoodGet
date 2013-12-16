@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Feed.cs" />
+    <Compile Include="FeedPackages.cs" />
     <Compile Include="GoodGetModule.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
