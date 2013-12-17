@@ -130,11 +130,13 @@ Global
 		{AC28D62F-1EA3-4028-8D44-BBA1644ACD3B}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
 		{AC28D62F-1EA3-4028-8D44-BBA1644ACD3B}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
 		{AC28D62F-1EA3-4028-8D44-BBA1644ACD3B}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{AC28D62F-1EA3-4028-8D44-BBA1644ACD3B}.Debug|x64.Build.0 = Debug|Any CPU
 		{AC28D62F-1EA3-4028-8D44-BBA1644ACD3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AC28D62F-1EA3-4028-8D44-BBA1644ACD3B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{AC28D62F-1EA3-4028-8D44-BBA1644ACD3B}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{AC28D62F-1EA3-4028-8D44-BBA1644ACD3B}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{AC28D62F-1EA3-4028-8D44-BBA1644ACD3B}.Release|x64.ActiveCfg = Release|Any CPU
+		{AC28D62F-1EA3-4028-8D44-BBA1644ACD3B}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
