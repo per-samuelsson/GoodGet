@@ -8,7 +8,8 @@ namespace GoodGet {
         /// <summary>
         /// Creates a new installer.
         /// </summary>
+        /// <param name="feed">The feed to create the installer for.</param>
         /// <returns>An instance of an <see cref="IInstaller"/>.</returns>
-        IInstaller CreateInstaller();
+        IInstaller CreateInstaller(Feed feed);
     }
 }
