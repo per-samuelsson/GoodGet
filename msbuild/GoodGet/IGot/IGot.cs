@@ -9,12 +9,12 @@ namespace GoodGet {
         /// </summary>
         /// <param name="packages">The packages to retreive.</param>
         /// <returns>An array of <see cref="Package"/>s.</returns>
-        public Package[] Get(string[] packages);
+        Package[] Get(string[] packages);
         
         /// <summary>
         /// Saves the current package information for later retreival.
         /// </summary>
         /// <param name="package">The <see cref="Package"/> to save.</param>
-        public void Save(Package package);
+        void Save(Package package);
     }
 }
