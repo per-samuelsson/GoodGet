@@ -19,6 +19,12 @@ namespace Modules {
             /// packages GoodGet got.
             /// </summary>
             public static IGot Got;
+
+            /// <summary>
+            /// A factory that knows how to construct <see cref="IInstaller"/>
+            /// instances.
+            /// </summary>
+            public static IInstallerFactory InstallerFactory;
         }
     }
 }
