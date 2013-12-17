@@ -13,6 +13,11 @@ namespace GoodGet {
         internal Dictionary<Feed, FeedPackages> packagesPerFeed = new Dictionary<Feed, FeedPackages>();
 
         /// <summary>
+        /// Path to where packages are installed.
+        /// </summary>
+        public readonly string Path;
+
+        /// <summary>
         /// The set of feeds possible to download and keep packages
         /// up to date from. Keyed on their Uri.
         /// </summary>
@@ -28,14 +33,25 @@ namespace GoodGet {
             if (packages == null || packages.Length == 0) {
                 throw new ArgumentNullException("packages");
             }
-            throw new NotImplementedException();
+
+            var f = new PackagesFolder(path);
+            foreach (var package in packages) {
+                f.AddPackage(package);
+            }
+
+            f.Install();
         }
 
         /// <summary>
         /// Initialize a <see cref="PackagesFolder"/> instance.
         /// </summary>
-        public PackagesFolder() {
+        /// <param name="path">The path to where packages are to be installed.</param>
+        public PackagesFolder(string path) {
+            if (string.IsNullOrWhiteSpace(path)) {
+                throw new ArgumentNullException("path");
+            }
             Feeds.Add(Feed.NuGetOfficial.Uri, Feed.NuGetOfficial);
+            Path = path;
         }
 
         /// <summary>
