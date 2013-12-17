@@ -151,7 +151,7 @@ namespace GoodGet {
             // Modules.GoodGetModule.Injections.Got = new GotNone();
 
             // The IInstallerFactory
-            // TODO:
+            Modules.GoodGetModule.Injections.InstallerFactory = new FlowDiagnosticInstaller.Factory();
 
             RunInstall();
         }
