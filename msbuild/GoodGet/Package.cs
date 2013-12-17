@@ -18,8 +18,8 @@ namespace GoodGet {
         public string Version { get; set; }
 
         /// <summary>
-        /// The time the package was retreived.
+        /// The time this package was last installed/updated.
         /// </summary>
-        public DateTime? Retreived { get; set; }
+        public DateTime? Installed { get; set; }
     }
 }

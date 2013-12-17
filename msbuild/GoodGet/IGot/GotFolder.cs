@@ -33,14 +33,14 @@ namespace GoodGet {
                         got = new Package() {
                             Id = package,
                             Version = tokens[0],
-                            Retreived = time,
+                            Installed = time,
                         };
                     }
                 }
             }
 
             public static void SerializePackage(Package package, out string data) {
-                data = string.Format("{0} {1}", package.Version, package.Retreived.Value.ToString(timeFormat));
+                data = string.Format("{0} {1}", package.Version, package.Installed.Value.ToString(timeFormat));
             }
         }
 
@@ -62,8 +62,8 @@ namespace GoodGet {
         void IGot.Save(Package package) {
             Utilities.AssureDirectory(path, FileAttributes.Hidden);
 
-            if (package.Retreived == null) {
-                package.Retreived = DateTime.Now;
+            if (package.Installed == null) {
+                package.Installed = DateTime.Now;
             }
 
             var pkgFile = GetGotFilePath(package.Id);
