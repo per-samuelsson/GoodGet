@@ -1,4 +1,0 @@
-LIBRARY	"scerrres"
-
-EXPORTS
-	FormatStarcounterErrorMessage
