@@ -77,13 +77,20 @@ namespace GoodGet {
 
         void GetPackage(string package, out Package got) {
             got = null;
-            var pkgFile = GetGotFilePath(package);
-            if (File.Exists(pkgFile)) {
-                var content = File.ReadAllLines(pkgFile);
-                if (content.Length >= 1) {
-                    PackageSerializer.DeserializePackage(package, content[0], out got);
+            var installedPackageFolder = GetInstalledPackagePath(package);
+            if (Directory.Exists(installedPackageFolder)) {
+                var pkgFile = GetGotFilePath(package);
+                if (File.Exists(pkgFile)) {
+                    var content = File.ReadAllLines(pkgFile);
+                    if (content.Length >= 1) {
+                        PackageSerializer.DeserializePackage(package, content[0], out got);
+                    }
                 }
             }
+        }
+
+        string GetInstalledPackagePath(string package) {
+            return Path.Combine(packagesPath, package);
         }
 
         string GetGotFilePath(string package) {
