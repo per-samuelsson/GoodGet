@@ -19,6 +19,19 @@ namespace GoodGet {
         public readonly Dictionary<string, Feed> Feeds = new Dictionary<string, Feed>();
 
         /// <summary>
+        /// Expose a one-line usage interface to the GoodGet module core
+        /// functionality.
+        /// </summary>
+        /// <param name="path">The path to where packages are to be installed.</param>
+        /// <param name="packages">The set of packages to install.</param>
+        public static void InstallPackages(string path, params string[] packages) {
+            if (packages == null || packages.Length == 0) {
+                throw new ArgumentNullException("packages");
+            }
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
         /// Initialize a <see cref="PackagesFolder"/> instance.
         /// </summary>
         public PackagesFolder() {
