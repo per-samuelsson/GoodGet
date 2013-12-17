@@ -45,7 +45,7 @@ namespace GoodGet {
         }
 
         public GotFolder(PackagesFolder packagesFolder) {
-            packagesPath = packagesFolder.Path;
+            packagesPath = packagesFolder.FullPath;
             path = Path.Combine(packagesPath, name);
         }
 

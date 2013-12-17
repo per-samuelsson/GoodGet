@@ -13,9 +13,15 @@ namespace GoodGet {
         internal Dictionary<Feed, FeedPackages> packagesPerFeed = new Dictionary<Feed, FeedPackages>();
 
         /// <summary>
-        /// Path to where packages are installed.
+        /// Path to where packages are installed as given when
+        /// the current <see cref="PackagesFolder"/> was created.
         /// </summary>
         public readonly string Path;
+
+        /// <summary>
+        /// The full path to where packages are installed.
+        /// </summary>
+        public readonly string FullPath;
 
         /// <summary>
         /// The set of feeds possible to download and keep packages
@@ -52,6 +58,7 @@ namespace GoodGet {
             }
             Feeds.Add(Feed.NuGetOfficial.Uri, Feed.NuGetOfficial);
             Path = path;
+            FullPath = System.IO.Path.GetFullPath(path);
         }
 
         /// <summary>
