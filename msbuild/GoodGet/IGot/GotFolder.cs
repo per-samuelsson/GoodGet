@@ -60,8 +60,7 @@ namespace GoodGet {
         }
 
         void IGot.Save(Package package) {
-            AssureDirectory(packagesPath);
-            AssureDirectory(path, FileAttributes.Hidden);
+            Utilities.AssureDirectory(path, FileAttributes.Hidden);
 
             if (package.Retreived == null) {
                 package.Retreived = DateTime.Now;
@@ -95,15 +94,6 @@ namespace GoodGet {
 
         string GetGotFilePath(string package) {
             return Path.Combine(path, package);
-        }
-
-        void AssureDirectory(string path, FileAttributes attributes = FileAttributes.Normal) {
-            if (!Directory.Exists(path)) {
-                var d = Directory.CreateDirectory(path);
-                if (attributes != FileAttributes.Normal) {
-                    d.Attributes |= attributes;
-                }
-            }
         }
     }
 }
