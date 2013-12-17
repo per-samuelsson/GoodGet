@@ -136,6 +136,14 @@ namespace GoodGet {
         /// </para>
         /// </remarks>
         public void Install() {
+            // Do injections here for now. We should allow the caller
+            // to override the defaults eventually.
+            Modules.GoodGetModule.Injections.Got = new GotFolder(this);
+
+            RunInstall();
+        }
+
+        void RunInstall() {
             throw new NotImplementedException();
         }
     }
