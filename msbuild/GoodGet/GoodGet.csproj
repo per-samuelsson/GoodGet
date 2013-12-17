@@ -43,7 +43,7 @@
   <ItemGroup>
     <Compile Include="Feed.cs" />
     <Compile Include="FeedPackages.cs" />
-    <Compile Include="GoodGetModule.cs" />
+    <Compile Include="Properties\GoodGetModule.cs" />
     <Compile Include="IGot\GotNone.cs" />
     <Compile Include="IGot\IGot.cs" />
     <Compile Include="Package.cs" />
