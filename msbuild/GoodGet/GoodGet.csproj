@@ -44,6 +44,8 @@
     <Compile Include="Feed.cs" />
     <Compile Include="FeedPackages.cs" />
     <Compile Include="IGot\GotFolder.cs" />
+    <Compile Include="IInstaller\IInstaller.cs" />
+    <Compile Include="IInstaller\IInstallerFactory.cs" />
     <Compile Include="Properties\GoodGetModule.cs" />
     <Compile Include="IGot\GotNone.cs" />
     <Compile Include="IGot\IGot.cs" />
