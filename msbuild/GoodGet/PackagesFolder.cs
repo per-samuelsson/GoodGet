@@ -83,15 +83,30 @@ namespace GoodGet {
         }
 
         /// <summary>
-        /// Updates all packages registered with the current packages
-        /// folder.
+        /// Installs or updates all packages registered with the current
+        /// packages folder.
         /// </summary>
         /// <remarks>
+        /// <para>
         /// Performs the actual core service of GoodGet: assures that
         /// all packages specified are part of the current local
         /// packages folder.
+        /// </para>
+        /// <para>
+        /// It has been advocated that 'install' is a poor name for the
+        /// NuGet CLI switch, since it does not really "install" packages
+        /// into projects as expected if you come from the angle where
+        /// you have used NuGet from within Visual Studio. For example,
+        /// see some comments in this popular David Ebbo post:
+        /// http://blog.davidebbo.com/2011/01/installing-nuget-packages-directly-from.html
+        /// </para>
+        /// <para>
+        /// Since 'install' have been thereafter rather recognized and
+        /// accepted for the CLI kind of behaviour, we'll stick to the
+        /// same lingo in GoodGet too.
+        /// </para>
         /// </remarks>
-        public void Update() {
+        public void Install() {
             throw new NotImplementedException();
         }
     }
