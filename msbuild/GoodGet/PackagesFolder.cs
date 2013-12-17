@@ -145,13 +145,37 @@ namespace GoodGet {
         public void Install() {
             // Do injections here for now. We should allow the caller
             // to override the defaults eventually.
+
+            // Pick a IGot implementation
             Modules.GoodGetModule.Injections.Got = new GotFolder(this);
+            // Modules.GoodGetModule.Injections.Got = new GotNone();
+
+            // The IInstallerFactory
+            // TODO:
 
             RunInstall();
         }
 
         void RunInstall() {
-            throw new NotImplementedException();
+            var installerFactory = Modules.GoodGetModule.Injections.InstallerFactory;
+            var got = Modules.GoodGetModule.Injections.Got;
+
+            if (packagesPerFeed.Count > 0) {
+                
+                // There is at least one package we should install.
+                // Assure the packages folder before we distribute it
+                // out over installers.
+                Utilities.AssureDirectory(FullPath);
+
+                // Create a new installer and a new context for every feed,
+                // then tell the context to install, and wait for it to finish.
+                // This could easily be done in parallell if we find merit to it.
+                
+                foreach (var item in packagesPerFeed) {
+                    var c = new InstallerContext(this, item.Value.Packages.ToArray(), installerFactory.CreateInstaller(item.Key), got);
+                    c.Install();
+                }
+            }
         }
     }
 }
