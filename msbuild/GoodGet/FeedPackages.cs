@@ -7,7 +7,7 @@ namespace GoodGet {
     /// <summary>
     /// Set of packages specified for certain <see cref="Feed"/>.
     /// </summary>
-    internal sealed class FeedPackages {
+    public sealed class FeedPackages {
         /// <summary>
         /// The feed the specified set of packages are to be
         /// synchronized with.
