@@ -7,6 +7,16 @@ namespace GoodGet {
     /// </summary>
     public sealed class Feed {
         /// <summary>
+        /// Reference to a <see cref="Feed"/> that represent the official 
+        /// NuGet feed.
+        /// </summary>
+        public static readonly Feed NuGetOfficial = new Feed() {
+            Uri = "https://www.nuget.org/api/v2/",
+            PackagesUri = "https://www.nuget.org/api/v2/Packages/",
+            DisplayName = "Official NuGet feed"
+        };
+
+        /// <summary>
         /// The Uri of the source itself, as used in standard
         /// NuGet lingo, e.g. when doing command-line nuget.exe
         /// 'install' and specifying '-source'.
