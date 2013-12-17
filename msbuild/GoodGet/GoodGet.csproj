@@ -44,6 +44,7 @@
     <Compile Include="Feed.cs" />
     <Compile Include="FeedPackages.cs" />
     <Compile Include="GoodGetModule.cs" />
+    <Compile Include="IGot.cs" />
     <Compile Include="Package.cs" />
     <Compile Include="PackagesFolder.cs">
       <SubType>Code</SubType>
