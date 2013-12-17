@@ -19,6 +19,13 @@ namespace GoodGet {
         public readonly Dictionary<string, Feed> Feeds = new Dictionary<string, Feed>();
 
         /// <summary>
+        /// Initialize a <see cref="PackagesFolder"/> instance.
+        /// </summary>
+        public PackagesFolder() {
+            Feeds.Add(Feed.NuGetOfficial.Uri, Feed.NuGetOfficial);
+        }
+
+        /// <summary>
         /// Adds a package to be contained in the current packages
         /// folder, optionally specifying what feed to synchronize it
         /// with.
