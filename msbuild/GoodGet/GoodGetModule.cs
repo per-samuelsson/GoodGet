@@ -1,7 +1,9 @@
 ﻿
 using System;
+using GoodGet;
 
 namespace Modules {
+    
     /// <summary>
     /// Represents the GoodGet module itself, and the pattern we
     /// use to support lightweight depedency injection.
@@ -13,9 +15,10 @@ namespace Modules {
         /// </summary>
         public static class Injections {
             /// <summary>
-            /// Sample dependency.
+            /// The component responsible for keeping track of what
+            /// packages GoodGet got.
             /// </summary>
-            public static IDisposable Sample = null;
+            public static IGot Got;
         }
     }
 }
