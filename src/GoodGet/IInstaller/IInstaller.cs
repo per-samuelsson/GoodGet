@@ -10,24 +10,13 @@ namespace GoodGet {
         /// fetch packages from.
         /// </summary>
         Feed Feed { get; }
- 
-        /// <summary>
-        /// Resolves the latest version of every package part of
-        /// the given <see cref="Package"/> array, based on the feed
-        /// this installer work against.
-        /// </summary>
-        /// <param name="packages">Set of packages to evaluate.</param>
-        /// <returns>Return <c>count</c> if any package was in fact
-        /// out-of-date; zero otherwise. For packages that are in need
-        /// of updating, the Version property should be changed either
-        /// to the latest version available, if supported by the current
-        /// installer, or <c>null</c> to indicate it needs to be updated,
-        /// but the exact version can't be determined by this method.
-        /// The count returned indicates how many packages are considered
-        /// outdated.
-        /// </returns>
-        int QueryLatest(Package[] packages);
 
+        /// <summary>
+        /// Gets the <see cref="UpdateAuthority"/> accociated with the
+        /// current installer.
+        /// </summary>
+        IUpdateAuthority UpdateAuthority { get; }
+ 
         /// <summary>
         /// Installs the given <see cref="Package"/> into the given
         /// <see cref="PackagesFolder"/>.

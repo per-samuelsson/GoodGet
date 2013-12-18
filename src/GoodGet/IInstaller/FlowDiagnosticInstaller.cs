@@ -3,7 +3,7 @@ using System;
 
 namespace GoodGet {
 
-    internal sealed class FlowDiagnosticInstaller : IInstaller {
+    internal sealed class FlowDiagnosticInstaller : IInstaller, IUpdateAuthority {
         readonly Feed feed;
 
         public sealed class Factory : IInstallerFactory {
@@ -20,12 +20,20 @@ namespace GoodGet {
             get { return feed; }
         }
 
-        int IInstaller.QueryLatest(Package[] packages) {
+        Feed IUpdateAuthority.Feed {
+            get { return feed; }
+        }
+
+        int IUpdateAuthority.CheckForUpdates(Package[] packages) {
             Console.WriteLine("{0}:{1}: Query latest for {2} packages", GetType().Name, feed.DisplayName, packages.Length);
             foreach (var p in packages) {
                 p.Version = null;
             }
             return packages.Length;
+        }
+
+        IUpdateAuthority IInstaller.UpdateAuthority {
+            get { return this; }
         }
 
         Package IInstaller.Install(PackagesFolder folder, Package package) {

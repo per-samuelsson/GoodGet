@@ -6,7 +6,7 @@ namespace GoodGet {
     /// <summary>
     /// Container for a given <see cref="IInstaller"/>, feeding the installer
     /// with the neccessary input and controlling the order in which packages
-    /// are installed.
+    /// are installed and/or updated.
     /// </summary>
     internal sealed class InstallerContext {
         readonly PackagesFolder folder;
@@ -22,11 +22,13 @@ namespace GoodGet {
         }
 
         public void Install() {
+            var updateAuthority = installer.UpdateAuthority;
+            var freshInstalls = new List<Package>();
+            var updateCandidates = new List<Package>();
+
             Console.WriteLine("Installing {0} packages from {1} to {2}", packages.Length, installer.Feed.DisplayName, folder.Path);
 
             var installedPackages = got.Get(packages);
-            var freshInstalls = new List<Package>();
-            var updateCandidates = new List<Package>();
 
             // Build a list of all packages that either need to install from scratch,
             // or those that need to be checked.
@@ -46,7 +48,7 @@ namespace GoodGet {
 
             var updates = updateCandidates.ToArray();
             var currents = (Package[])updates.Clone();
-            var outdatedPackages = installer.QueryLatest(updates);
+            var outdatedPackages = updateAuthority.CheckForUpdates(updates);
 
             foreach (var install in freshInstalls) {
                 var installed = installer.Install(folder, install);
