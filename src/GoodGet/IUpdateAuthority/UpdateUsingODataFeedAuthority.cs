@@ -1,5 +1,8 @@
 ﻿
 using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Web.Script.Serialization;
 
 namespace GoodGet {
     /// <summary>
@@ -45,13 +48,48 @@ namespace GoodGet {
             //     3.2) Get entry based on name and '$filter' the feed for
             //          the one that is the latest, and compare the version
             //          we get back to "got".
-            //     3.3) More?
+            //     3.3) Don't get JSON - faster with other data?
+            //     3.4) Use 'select' feature to only fetch the actual
+            //          "IsAbsoluteLatestVersion" property.
             //   4) Check each of (3) with different number of packages in
             //      the feed - does it matter if its 5 or 500?
             //   5) Check if we can do things in parallel (using PTL).
+
+            int count = 0;
+            foreach (var p in packages) {
+                var uri = string.Format("{0}(Id='{1}',Version='{2}')?$select=IsAbsoluteLatestVersion", feed.PackagesUri, p.Id, p.Version);
+                var content = DownloadStringUsingWebClient(uri);
+
+                var isLatest = ParseIsLatestUsingJSONWithOnlyDotNet(content);
+                if (!isLatest) {
+                    count++;
+                    p.Version = null;
+                }
+            }
+
+            return count;
+        }
+
+        static string DownloadStringUsingWebClient(string uri) {
+            // The .NET web client is just a joke. I mean, really.
+            // It so slow it's just sick. Count on that every request
+            // to download even the smallest string is like 2-3
+            // seconds. This is a soon-to-be-addressed feature for
+            // GoodGet to be really usable.
             // TODO:
 
-            throw new NotImplementedException();
+            var w = new WebClient();
+            w.Headers.Add("accept:application/json");
+            return w.DownloadString(uri);
+        }
+
+        static bool ParseIsLatestUsingJSONWithOnlyDotNet(string json) {
+            // Simplest possible to start with, using just the
+            // bits we've got in the .NET framework.
+            var x = new JavaScriptSerializer();
+            var t = x.Deserialize<Dictionary<string, object>>(json);
+            var d = t["d"] as IDictionary<string, object>;
+            return (bool) d["IsAbsoluteLatestVersion"];
         }
     }
 }
