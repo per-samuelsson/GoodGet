@@ -49,6 +49,8 @@
     <Compile Include="IInstaller\IInstallerFactory.cs" />
     <Compile Include="InstallerContext.cs" />
     <Compile Include="IUpdateAuthority\IUpdateAuthority.cs" />
+    <Compile Include="IUpdateAuthority\UpdateAlwaysAuthority.cs" />
+    <Compile Include="IUpdateAuthority\UpdateOnIntervalAuthority.cs" />
     <Compile Include="Properties\GoodGetModule.cs" />
     <Compile Include="IGot\GotNone.cs" />
     <Compile Include="IGot\IGot.cs" />
