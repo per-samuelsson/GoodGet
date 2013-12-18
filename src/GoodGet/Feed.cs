@@ -12,7 +12,7 @@ namespace GoodGet {
         /// </summary>
         public static readonly Feed NuGetOfficial = new Feed() {
             Uri = "https://www.nuget.org/api/v2/",
-            PackagesUri = "https://www.nuget.org/api/v2/Packages/",
+            PackagesUri = "https://www.nuget.org/api/v2/Packages",
             DisplayName = "Official NuGet feed"
         };
 
