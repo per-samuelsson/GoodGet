@@ -172,7 +172,7 @@ namespace GoodGet {
                 // This could easily be done in parallell if we find merit to it.
                 
                 foreach (var item in packagesPerFeed) {
-                    var c = new InstallerContext(this, item.Value.Packages.ToArray(), installerFactory.CreateInstaller(item.Key), got);
+                    var c = new InstallerContext(this, item.Value.Packages.ToArray(), installerFactory.CreateInstaller(item.Key, null), got);
                     c.Install();
                 }
             }

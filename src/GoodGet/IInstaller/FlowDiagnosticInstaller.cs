@@ -5,15 +5,17 @@ namespace GoodGet {
 
     internal sealed class FlowDiagnosticInstaller : IInstaller, IUpdateAuthority {
         readonly Feed feed;
+        IUpdateAuthority updateAuthority;
 
         public sealed class Factory : IInstallerFactory {
-            IInstaller IInstallerFactory.CreateInstaller(Feed feed) {
-                return new FlowDiagnosticInstaller(feed);
+            IInstaller IInstallerFactory.CreateInstaller(Feed feed, IUpdateAuthority updateAuthority) {
+                return new FlowDiagnosticInstaller(feed, updateAuthority);
             }
         }
 
-        public FlowDiagnosticInstaller(Feed f) {
+        public FlowDiagnosticInstaller(Feed f, IUpdateAuthority updateAuthority = null) {
             feed = f;
+            this.updateAuthority = updateAuthority ?? this;
         }
 
         Feed IInstaller.Feed {
@@ -33,7 +35,7 @@ namespace GoodGet {
         }
 
         IUpdateAuthority IInstaller.UpdateAuthority {
-            get { return this; }
+            get { return updateAuthority; }
         }
 
         Package IInstaller.Install(PackagesFolder folder, Package package) {
