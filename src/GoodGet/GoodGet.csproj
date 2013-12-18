@@ -47,6 +47,7 @@
     <Compile Include="IInstaller\FlowDiagnosticInstaller.cs" />
     <Compile Include="IInstaller\IInstaller.cs" />
     <Compile Include="IInstaller\IInstallerFactory.cs" />
+    <Compile Include="IInstaller\NuGetCLIInstaller.cs" />
     <Compile Include="InstallerContext.cs" />
     <Compile Include="IUpdateAuthority\IUpdateAuthority.cs" />
     <Compile Include="IUpdateAuthority\UpdateAlwaysAuthority.cs" />
