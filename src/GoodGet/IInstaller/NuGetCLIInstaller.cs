@@ -14,7 +14,7 @@ namespace GoodGet {
 
         public sealed class Factory : IInstallerFactory {
             IInstaller IInstallerFactory.CreateInstaller(Feed feed, IUpdateAuthority updateAuthority) {
-                updateAuthority = updateAuthority ?? new UpdateAlwaysAuthority(feed);
+                updateAuthority = updateAuthority ?? new UpdateUsingODataFeedAuthority(feed);
                 return new NuGetCLIInstaller(feed, updateAuthority);
             }
         }
