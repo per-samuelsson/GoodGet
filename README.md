@@ -30,3 +30,6 @@ Questions or feedback
 =====================
 per [at] starcounter.com
 
+Limitations
+===========
+Check [here](https://github.com/per-samuelsson/GoodGet/issues?labels=enhancement&page=1&state=open).
