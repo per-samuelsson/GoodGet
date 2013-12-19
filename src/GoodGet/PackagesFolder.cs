@@ -42,7 +42,9 @@ namespace GoodGet {
         /// </summary>
         /// <param name="path">The path to where packages are to be installed.</param>
         /// <param name="packages">The set of packages to install.</param>
-        public static void InstallPackages(string path, params string[] packages) {
+        /// <returns>Return <c>true</c> if any package were in fact updated
+        /// or installed; <c>false</c> if not.</returns>
+        public static bool InstallPackages(string path, params string[] packages) {
             if (packages == null || packages.Length == 0) {
                 throw new ArgumentNullException("packages");
             }
@@ -52,7 +54,7 @@ namespace GoodGet {
                 f.AddPackage(package);
             }
 
-            f.Install();
+            return f.Install();
         }
 
         /// <summary>
@@ -129,6 +131,8 @@ namespace GoodGet {
         /// Installs or updates all packages registered with the current
         /// packages folder.
         /// </summary>
+        /// <returns>Return <c>true</c> if any package were in fact updated
+        /// or installed; <c>false</c> if not.</returns>
         /// <remarks>
         /// <para>
         /// Performs the actual core service of GoodGet: assures that
@@ -149,12 +153,13 @@ namespace GoodGet {
         /// same lingo in GoodGet too.
         /// </para>
         /// </remarks>
-        public void Install() {
+        public bool Install() {
             var got = new GotFolder(this); /*new GotNone();*/
-            RunInstall(got);
+            return RunInstall(got);
         }
 
-        void RunInstall(IGot got) {
+        bool RunInstall(IGot got) {
+            var packagesInstalledOrUpdated = false;
             var installerFactory = Modules.GoodGetModule.Injections.InstallerFactory;
             
             if (packagesPerFeed.Count > 0) {
@@ -170,9 +175,11 @@ namespace GoodGet {
                 
                 foreach (var item in packagesPerFeed) {
                     var c = new InstallerContext(this, item.Value.Packages.ToArray(), installerFactory.CreateInstaller(item.Key, null), got);
-                    c.Install();
+                    packagesInstalledOrUpdated = packagesInstalledOrUpdated || c.Install();
                 }
             }
+
+            return packagesInstalledOrUpdated;
         }
     }
 }
