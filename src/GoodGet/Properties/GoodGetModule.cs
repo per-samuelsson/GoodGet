@@ -17,6 +17,10 @@ namespace Modules {
         /// Contains all dependency injections into this module
         /// </summary>
         public static class Injections {
+            static Injections() {
+                GoodGetModule.Touch();
+            }
+
             /// <summary>
             /// Gets the implementation of the <see cref="IConsole"/>
             /// that GoodGet will use when writing output.
