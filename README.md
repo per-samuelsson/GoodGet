@@ -6,25 +6,37 @@ And it's **fast**.
 
 Compared to NuGet.exe
 =====================
-* NuGet is about bringing down dependent bits to your computer. GoodGet is too.
-* NuGet brings down bits as "packages" from sources called "nuget feeds". GoodGet does too.
-* NuGet keeps track of what version of a package you've got installed. GoodGet does too.
-* NuGet makes sure that package is in fact installed. GoodGet does too.
-* NuGet lets you update the version of a package to bring down a new version of that package. GoodGet does not.
-* GoodGet always bring down the very latest package version. NuGet does not.
-* GoodGet installs the latest version of a package to a predictable location. NuGet does not.
+* NuGet is about **bringing down dependent bits** to your computer.
+    * GoodGet is too.
+* NuGet brings down bits as **"packages"** from sources called **"nuget feeds"**.
+    * GoodGet does too.
+* NuGet keeps track of what **version of a package** you've got **installed**.
+    * GoodGet does too.
+* NuGet **make sure** that **package is installed**.
+    * GoodGet does too.
+* NuGet allows you to **update the version** to bring down a **newer version** of that package.
+    * GoodGet does ***not***.
+
+Instead,
+
+* GoodGet **always bring down the very latest** package version.
+    * NuGet does not.
+* GoodGet **figure out** whether to **install or update** your package.
+    * NuGet does not.
+* GoodGet installs the latest version of a package to a **predictable location**. 
+    * NuGet, by default, does not.
 
 API
 ===
-GoodGet is exposed as a **.NET library**
+GoodGet is exposed both as a **.NET library**
 
 ```
-PackagesFolder.Install(C:\Packages", "NUnit");
+PackagesFolder.Install("c:\packages", "NUnit");
 ```
 
 and as a **command-line** tool.
 
-> C:\Packages>goodget "NUnit"
+> C:\Packages>goodget . NUnit
 
 Questions or feedback
 =====================
