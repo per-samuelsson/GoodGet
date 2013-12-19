@@ -23,7 +23,7 @@ namespace GoodGet {
             this.got = got;
         }
 
-        public void Install() {
+        public bool Install() {
             var updateAuthority = installer.UpdateAuthority;
             var freshInstalls = new List<Package>();
             var updateCandidates = new List<Package>();
@@ -67,6 +67,8 @@ namespace GoodGet {
                     }
                 }
             }
+
+            return outdatedPackages > 0 || freshInstalls.Count > 0;
         }
     }
 }
