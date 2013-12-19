@@ -52,6 +52,7 @@
     <Compile Include="InstallerContext.cs" />
     <Compile Include="IRestClient\IRestClient.cs" />
     <Compile Include="IRestClient\IRestClientFactory.cs" />
+    <Compile Include="IRestClient\NetWebClientRestClient.cs" />
     <Compile Include="IUpdateAuthority\IUpdateAuthority.cs" />
     <Compile Include="IUpdateAuthority\UpdateAlwaysAuthority.cs" />
     <Compile Include="IUpdateAuthority\UpdateOnIntervalAuthority.cs" />
