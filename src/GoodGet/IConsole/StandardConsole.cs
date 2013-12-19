@@ -24,8 +24,8 @@ namespace GoodGet {
         /// omit any output written.
         /// </summary>
         public bool Quiet {
-            get { return CurrentSeverityLevel < 0; }
-            set { CurrentSeverityLevel = -1; }
+            get { return CurrentSeverityLevel > Rank.Error; }
+            set { CurrentSeverityLevel = Rank.Error + 1; }
         }
 
         /// <summary>
