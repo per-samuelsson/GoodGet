@@ -29,6 +29,13 @@ namespace GoodGet {
         }
 
         /// <summary>
+        /// Initialize a new <see cref="StandardConsole"/> instance.
+        /// </summary>
+        public StandardConsole() {
+            CurrentSeverityLevel = Rank.Info;
+        }
+
+        /// <summary>
         /// Gets or sets the severity level that govers what
         /// messages gets written to the underlying console.
         /// </summary>
