@@ -1,4 +1,5 @@
 ﻿
+using Modules;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,9 @@ namespace GoodGet {
     /// </summary>
     public sealed class PackagesFolder {
         static PackagesFolder() {
-            MakeDefaultDependencyInjections();
+            // If not before, assure we install all default
+            // dependencies when this class starts being used.
+            GoodGetModule.Touch();
         }
 
         internal Dictionary<Feed, FeedPackages> packagesPerFeed = new Dictionary<Feed, FeedPackages>();
@@ -170,21 +173,6 @@ namespace GoodGet {
                     c.Install();
                 }
             }
-        }
-
-        static void MakeDefaultDependencyInjections() {
-            // Pick IConsole implementation
-            var console = Modules.GoodGetModule.Injections.Console;
-            Modules.GoodGetModule.Injections.Console = console ?? new StandardConsole();
-
-            // The IInstallerFactory
-            var installerFactory = Modules.GoodGetModule.Injections.InstallerFactory;
-            Modules.GoodGetModule.Injections.InstallerFactory = installerFactory ?? 
-                new NuGetCLIInstaller.Factory(); /*new FlowDiagnosticInstaller.Factory();*/
-
-            // The IRestClientFactory
-            var restClientFactory = Modules.GoodGetModule.Injections.RestClientFactory;
-            Modules.GoodGetModule.Injections.RestClientFactory = restClientFactory ?? new NetWebClientRestClient.Factory();
         }
     }
 }

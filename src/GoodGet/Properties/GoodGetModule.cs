@@ -9,6 +9,9 @@ namespace Modules {
     /// use to support lightweight depedency injection.
     /// </summary>
     public static class GoodGetModule {
+        static GoodGetModule() {
+            MakeDefaultDependencyInjections();
+        }
 
         /// <summary>
         /// Contains all dependency injections into this module
@@ -31,6 +34,28 @@ namespace Modules {
             /// instances.
             /// </summary>
             public static IRestClientFactory RestClientFactory;
+        }
+
+        /// <summary>
+        /// Supports being "touched", making sure all dependency injections
+        /// are properly set before use.
+        /// </summary>
+        public static void Touch() {
+            // Static constructor does the work.
+        }
+
+        static void MakeDefaultDependencyInjections() {
+            // Pick IConsole implementation
+            var console = Injections.Console;
+            Injections.Console = console ?? new StandardConsole();
+
+            // The IInstallerFactory
+            var installerFactory = Injections.InstallerFactory;
+            Injections.InstallerFactory = installerFactory ?? new NuGetCLIInstaller.Factory(); /*new FlowDiagnosticInstaller.Factory();*/
+
+            // The IRestClientFactory
+            var restClientFactory = Injections.RestClientFactory;
+            Injections.RestClientFactory = restClientFactory ?? new NetWebClientRestClient.Factory();
         }
     }
 }
