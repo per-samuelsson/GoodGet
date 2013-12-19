@@ -45,6 +45,7 @@
     <Compile Include="Feed.cs" />
     <Compile Include="FeedPackages.cs" />
     <Compile Include="IConsole\IConsole.cs" />
+    <Compile Include="IConsole\Rank.cs" />
     <Compile Include="IConsole\StandardConsole.cs">
       <SubType>Code</SubType>
     </Compile>
