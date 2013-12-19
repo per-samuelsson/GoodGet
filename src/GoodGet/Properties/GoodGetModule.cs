@@ -15,6 +15,12 @@ namespace Modules {
         /// </summary>
         public static class Injections {
             /// <summary>
+            /// Gets the implementation of the <see cref="IConsole"/>
+            /// that GoodGet will use when writing output.
+            /// </summary>
+            public static IConsole Console;
+
+            /// <summary>
             /// The component responsible for keeping track of what
             /// packages GoodGet got.
             /// </summary>
