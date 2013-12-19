@@ -17,6 +17,7 @@ namespace GoodGet {
             var packages = new List<string>();
             var verbose = false;
             var quiet = false;
+            var time = false;
 
             foreach (var arg in args) {
                 if (arg.StartsWith("-")) {
@@ -27,6 +28,9 @@ namespace GoodGet {
                             break;
                         case "quiet":
                             quiet = true;
+                            break;
+                        case "time":
+                            time = true;
                             break;
                         case "got":
                             Console.WriteLine("Option 'got' is not yet supported");
@@ -53,20 +57,25 @@ namespace GoodGet {
                 return;
             }
 
-            if (quiet || verbose) {
-                var consoleImplementation = GoodGetModule.Injections.Console as StandardConsole;
+            var console = GoodGetModule.Injections.Console;
+            if (quiet || verbose || time) {
+                var consoleImplementation = console as StandardConsole;
                 if (consoleImplementation != null) {
                     if (quiet) {
                         consoleImplementation.Quiet = true;
-                    } else {
+                    } else if (verbose) {
                         consoleImplementation.CurrentSeverityLevel = Rank.Debug;
+                    }
+
+                    if (time) {
+                        consoleImplementation.ShowTime = true;
                     }
                 }
             }
 
             var result = PackagesFolder.InstallPackages(packagesFolder, packages.ToArray());
             if (!result) {
-                Console.WriteLine("All packages up-to-date.");
+                console.WriteLine("All packages up-to-date.");
             }
         }
 
@@ -77,6 +86,7 @@ namespace GoodGet {
             Console.WriteLine("Options:");
             Console.WriteLine("  -verbose  Write verbose output");
             Console.WriteLine("  -quiet    Write no output");
+            Console.WriteLine("  -time     Prefix all output with time elapsed since starting");
             Console.WriteLine("  -got      Just show what packages we got");
             Console.WriteLine();
             Console.WriteLine("Examples:");
