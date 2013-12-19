@@ -25,6 +25,12 @@ namespace Modules {
             /// instances.
             /// </summary>
             public static IInstallerFactory InstallerFactory;
+
+            /// <summary>
+            /// A factory that knows how to construct <see cref="IRestClient"/>
+            /// instances.
+            /// </summary>
+            public static IRestClientFactory RestClientFactory;
         }
     }
 }
