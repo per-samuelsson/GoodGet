@@ -64,7 +64,10 @@ namespace GoodGet {
                 }
             }
 
-            PackagesFolder.InstallPackages(packagesFolder, packages.ToArray());
+            var result = PackagesFolder.InstallPackages(packagesFolder, packages.ToArray());
+            if (!result) {
+                Console.WriteLine("All packages up-to-date.");
+            }
         }
 
         static void Usage() {
