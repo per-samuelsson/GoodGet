@@ -146,6 +146,9 @@ namespace GoodGet {
             // Do injections here for now. We should allow the caller
             // to override the defaults eventually.
 
+            // Pick IConsole implementation
+            Modules.GoodGetModule.Injections.Console = new StandardConsole();
+
             // Pick a IGot implementation
             Modules.GoodGetModule.Injections.Got = new GotFolder(this);
             // Modules.GoodGetModule.Injections.Got = new GotNone();
