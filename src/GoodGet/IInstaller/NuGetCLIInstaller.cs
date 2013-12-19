@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Net;
 
 namespace GoodGet {
 
@@ -24,6 +25,7 @@ namespace GoodGet {
         private NuGetCLIInstaller(Feed feed, IUpdateAuthority updateAuthority) {
             this.feed = feed;
             this.updateAuthority = updateAuthority;
+            downloadExeIfNotFound = true;
         }
 
         Feed IInstaller.Feed {
@@ -35,10 +37,6 @@ namespace GoodGet {
         }
 
         Package IInstaller.Install(PackagesFolder folder, Package package) {
-            if (downloadExeIfNotFound) {
-                throw new NotSupportedException();
-            }
-
             var targetDir = Path.Combine(folder.FullPath, package.Id);
             if (Directory.Exists(targetDir)) {
                 Directory.Delete(targetDir, true);
@@ -55,6 +53,9 @@ namespace GoodGet {
                 feed.Uri,
                 folder.FullPath
             );
+
+            var attemptDownload = downloadExeIfNotFound;
+            run_nuget:
             try {
                 var output = new List<string>();
                 var result = Utilities.ToolProcess.Invoke(start, output, output);
@@ -71,14 +72,22 @@ namespace GoodGet {
                 }
             } catch (Win32Exception e) {
                 if (e.NativeErrorCode == 2) {
-                    if (downloadExeIfNotFound) {
+                    if (attemptDownload) {
+                        console.WriteLine(Rank.Notice, "NuGet.exe not found. Downloading it...");
+
                         // If nuget.exe is not accessible (e.g. not in the PATH or in
-                        // the local folder), we could offer downloading it on demand.
+                        // the local folder), we download it on demand.
                         // We could also offer a NuGet path as a configuration alternative
                         // when any NuGet CLI components are in effect.
-                        
-                        // Download NuGet.exe.
-                        // TODO:
+
+                        var exeDir = Path.GetDirectoryName(GetType().Assembly.Location);
+                        var targetPath = Path.Combine(exeDir, "nuget.exe");
+
+                        var client = new WebClient();
+                        client.DownloadFile("https://www.nuget.org/nuget.exe", targetPath);
+                        console.WriteLine(Rank.Debug, "NuGet.exe downloaded to {0}", targetPath);
+                        attemptDownload = false;
+                        goto run_nuget;
                     }
                 }
                 throw;
