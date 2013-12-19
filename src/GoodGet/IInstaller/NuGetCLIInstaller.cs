@@ -9,6 +9,7 @@ using System.IO;
 namespace GoodGet {
 
     internal sealed class NuGetCLIInstaller : IInstaller {
+        readonly IConsole console = GoodGetModule.Injections.Console;
         readonly Feed feed;
         readonly IUpdateAuthority updateAuthority;
         readonly bool downloadExeIfNotFound = false;
@@ -58,10 +59,15 @@ namespace GoodGet {
                 var output = new List<string>();
                 var result = Utilities.ToolProcess.Invoke(start, output, output);
                 if (result != 0) {
+                    var message = string.Format("nuget.exe failed with code {0}", result);
+                    var errorSeverity = 4;
+
+                    console.WriteLine(errorSeverity, message);
                     foreach (var s in output) {
-                        Console.WriteLine(s);
+                        console.WriteLine(errorSeverity, s);
                     }
-                    throw new Exception(string.Format("nuget.exe failed with code {0}", result));
+
+                    throw new Exception(message);
                 }
             } catch (Win32Exception e) {
                 if (e.NativeErrorCode == 2) {

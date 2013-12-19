@@ -1,4 +1,5 @@
 ﻿
+using Modules;
 using System;
 using System.Collections.Generic;
 
@@ -9,6 +10,7 @@ namespace GoodGet {
     /// are installed and/or updated.
     /// </summary>
     internal sealed class InstallerContext {
+        readonly IConsole console = GoodGetModule.Injections.Console;
         readonly PackagesFolder folder;
         readonly string[] packages;
         readonly IInstaller installer;
@@ -26,7 +28,7 @@ namespace GoodGet {
             var freshInstalls = new List<Package>();
             var updateCandidates = new List<Package>();
 
-            Console.WriteLine("Installing {0} packages from {1} to {2}", packages.Length, installer.Feed.DisplayName, folder.Path);
+            console.WriteLine("Installing {0} packages from {1} to {2}", packages.Length, installer.Feed.DisplayName, folder.Path);
 
             var installedPackages = got.Get(packages);
 

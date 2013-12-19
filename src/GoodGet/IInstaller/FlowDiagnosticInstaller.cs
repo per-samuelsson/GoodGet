@@ -1,12 +1,14 @@
 ﻿
+using Modules;
 using System;
 
 namespace GoodGet {
 
     internal sealed class FlowDiagnosticInstaller : IInstaller, IUpdateAuthority {
+        readonly IConsole console = GoodGetModule.Injections.Console;
         readonly Feed feed;
-        IUpdateAuthority updateAuthority;
-
+        readonly IUpdateAuthority updateAuthority;
+        
         public sealed class Factory : IInstallerFactory {
             IInstaller IInstallerFactory.CreateInstaller(Feed feed, IUpdateAuthority updateAuthority) {
                 return new FlowDiagnosticInstaller(feed, updateAuthority);
@@ -14,7 +16,7 @@ namespace GoodGet {
         }
 
         public FlowDiagnosticInstaller(Feed f, IUpdateAuthority updateAuthority = null) {
-            feed = f;
+            this.feed = f;
             this.updateAuthority = updateAuthority ?? this;
         }
 
@@ -27,7 +29,7 @@ namespace GoodGet {
         }
 
         int IUpdateAuthority.CheckForUpdates(Package[] packages) {
-            Console.WriteLine("{0}:{1}: Query latest for {2} packages", GetType().Name, feed.DisplayName, packages.Length);
+            console.WriteLine("{0}:{1}: Query latest for {2} packages", GetType().Name, feed.DisplayName, packages.Length);
             foreach (var p in packages) {
                 p.Version = null;
             }
@@ -39,7 +41,7 @@ namespace GoodGet {
         }
 
         Package IInstaller.Install(PackagesFolder folder, Package package) {
-            Console.WriteLine("{0}:{1}: Installing package {2} into {3}", GetType().Name, feed.DisplayName, package.Id, folder.Path);
+            console.WriteLine("{0}:{1}: Installing package {2} into {3}", GetType().Name, feed.DisplayName, package.Id, folder.Path);
             var result = new Package { Id = package.Id, Version = "1.2.3" };
             return result;
         }
