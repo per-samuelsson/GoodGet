@@ -10,6 +10,10 @@ namespace GoodGet {
     /// be kept in their latest version on any new update.
     /// </summary>
     public sealed class PackagesFolder {
+        static PackagesFolder() {
+            MakeDefaultDependencyInjections();
+        }
+
         internal Dictionary<Feed, FeedPackages> packagesPerFeed = new Dictionary<Feed, FeedPackages>();
 
         /// <summary>
@@ -143,30 +147,13 @@ namespace GoodGet {
         /// </para>
         /// </remarks>
         public void Install() {
-            // Do injections here for now. We should allow the caller
-            // to override the defaults eventually.
-
-            // Pick IConsole implementation
-            Modules.GoodGetModule.Injections.Console = new StandardConsole();
-
-            // Pick a IGot implementation
-            Modules.GoodGetModule.Injections.Got = new GotFolder(this);
-            // Modules.GoodGetModule.Injections.Got = new GotNone();
-
-            // The IInstallerFactory
-            // Modules.GoodGetModule.Injections.InstallerFactory = new FlowDiagnosticInstaller.Factory();
-            Modules.GoodGetModule.Injections.InstallerFactory = new NuGetCLIInstaller.Factory();
-
-            // The IRestClientFactory
-            Modules.GoodGetModule.Injections.RestClientFactory = new NetWebClientRestClient.Factory();
-
-            RunInstall();
+            var got = new GotFolder(this); /*new GotNone();*/
+            RunInstall(got);
         }
 
-        void RunInstall() {
+        void RunInstall(IGot got) {
             var installerFactory = Modules.GoodGetModule.Injections.InstallerFactory;
-            var got = Modules.GoodGetModule.Injections.Got;
-
+            
             if (packagesPerFeed.Count > 0) {
                 
                 // There is at least one package we should install.
@@ -183,6 +170,21 @@ namespace GoodGet {
                     c.Install();
                 }
             }
+        }
+
+        static void MakeDefaultDependencyInjections() {
+            // Pick IConsole implementation
+            var console = Modules.GoodGetModule.Injections.Console;
+            Modules.GoodGetModule.Injections.Console = console ?? new StandardConsole();
+
+            // The IInstallerFactory
+            var installerFactory = Modules.GoodGetModule.Injections.InstallerFactory;
+            Modules.GoodGetModule.Injections.InstallerFactory = installerFactory ?? 
+                new NuGetCLIInstaller.Factory(); /*new FlowDiagnosticInstaller.Factory();*/
+
+            // The IRestClientFactory
+            var restClientFactory = Modules.GoodGetModule.Injections.RestClientFactory;
+            Modules.GoodGetModule.Injections.RestClientFactory = restClientFactory ?? new NetWebClientRestClient.Factory();
         }
     }
 }

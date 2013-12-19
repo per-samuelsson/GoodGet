@@ -21,12 +21,6 @@ namespace Modules {
             public static IConsole Console;
 
             /// <summary>
-            /// The component responsible for keeping track of what
-            /// packages GoodGet got.
-            /// </summary>
-            public static IGot Got;
-
-            /// <summary>
             /// A factory that knows how to construct <see cref="IInstaller"/>
             /// instances.
             /// </summary>
