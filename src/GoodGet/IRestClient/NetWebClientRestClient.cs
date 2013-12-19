@@ -34,9 +34,7 @@ namespace GoodGet {
         /// from.</param>
         private NetWebClientRestClient(Feed feed) {
             this.feed = feed;
-            
             client = new WebClient();
-            client.Headers.Add("accept:application/json");
         }
 
         /// <inheritdoc/>
@@ -46,6 +44,7 @@ namespace GoodGet {
 
         /// <inheritdoc/>
         string IRestClient.GetJSONString(string uri) {
+            client.Headers.Set("accept", "application/json");
             return client.DownloadString(uri);
         }
     }
