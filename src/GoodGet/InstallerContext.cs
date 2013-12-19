@@ -64,7 +64,7 @@ namespace GoodGet {
                     console.WriteLine("Installing {0} from \"{1}\" into {2}...", install.Id, installer.Feed.DisplayName, folder.Path);
                     var installed = installer.Install(folder, install);
                     got.Save(installed);
-                    console.WriteLine("Done (Version {0} installed)", installed.Version);
+                    console.WriteLine("Done ({0} installed)", installed.Version);
                 }
 
                 console.WriteLine(
