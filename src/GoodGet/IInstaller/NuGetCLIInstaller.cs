@@ -1,4 +1,5 @@
 ﻿
+using Modules;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,7 +15,7 @@ namespace GoodGet {
 
         public sealed class Factory : IInstallerFactory {
             IInstaller IInstallerFactory.CreateInstaller(Feed feed, IUpdateAuthority updateAuthority) {
-                updateAuthority = updateAuthority ?? new UpdateUsingODataFeedAuthority(feed);
+                updateAuthority = updateAuthority ?? new UpdateUsingODataFeedAuthority(feed, GoodGetModule.Injections.RestClientFactory.CreateClient(feed));
                 return new NuGetCLIInstaller(feed, updateAuthority);
             }
         }

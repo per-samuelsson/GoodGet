@@ -11,6 +11,7 @@ namespace GoodGet {
     /// </summary>
     internal sealed class UpdateUsingODataFeedAuthority : IUpdateAuthority {
         readonly Feed feed;
+        readonly IRestClient client;
         readonly TimeSpan? recencyDelay;
 
         /// <summary>
@@ -18,10 +19,12 @@ namespace GoodGet {
         /// instance.
         /// </summary>
         /// <param name="feed">The feed to update from.</param>
+        /// <param name="restClient">The <see cref="IRestClient"/> to use.</param>
         /// <param name="recencyDelay">A delay to use that limits the check for
         /// an update to a certain recency.</param>
-        public UpdateUsingODataFeedAuthority(Feed feed, TimeSpan? recencyDelay = null) {
+        public UpdateUsingODataFeedAuthority(Feed feed, IRestClient restClient, TimeSpan? recencyDelay = null) {
             this.feed = feed;
+            this.client = restClient;
             this.recencyDelay = recencyDelay;
         }
 
@@ -58,7 +61,7 @@ namespace GoodGet {
             int count = 0;
             foreach (var p in packages) {
                 var uri = string.Format("{0}(Id='{1}',Version='{2}')?$select=IsAbsoluteLatestVersion", feed.PackagesUri, p.Id, p.Version);
-                var content = DownloadStringUsingWebClient(uri);
+                var content = client.GetJSONString(uri);
 
                 var isLatest = ParseIsLatestUsingJSONWithOnlyDotNet(content);
                 if (!isLatest) {
@@ -68,19 +71,6 @@ namespace GoodGet {
             }
 
             return count;
-        }
-
-        static string DownloadStringUsingWebClient(string uri) {
-            // The .NET web client is just a joke. I mean, really.
-            // It so slow it's just sick. Count on that every request
-            // to download even the smallest string is like 2-3
-            // seconds. This is a soon-to-be-addressed feature for
-            // GoodGet to be really usable.
-            // TODO:
-
-            var w = new WebClient();
-            w.Headers.Add("accept:application/json");
-            return w.DownloadString(uri);
         }
 
         static bool ParseIsLatestUsingJSONWithOnlyDotNet(string json) {
