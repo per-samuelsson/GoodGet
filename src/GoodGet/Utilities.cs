@@ -1,7 +1,9 @@
 ﻿
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 
 namespace GoodGet {
 
@@ -41,6 +43,14 @@ namespace GoodGet {
                     d.Attributes |= attributes;
                 }
             }
+        }
+
+        public static T[] Clone<T>(this ICloneable[] array) {
+            var result = new T[array.Length];
+            for (int i = 0; i < array.Length; i++) {
+                result[i] = (T) array[i].Clone();
+            }
+            return result;
         }
     }
 }
