@@ -1,4 +1,5 @@
 ﻿
+using Modules;
 using System;
 using System.Collections.Generic;
 
@@ -50,6 +51,17 @@ namespace GoodGet {
                 Console.WriteLine("Specify at least one package");
                 Usage();
                 return;
+            }
+
+            if (quiet || verbose) {
+                var consoleImplementation = GoodGetModule.Injections.Console as StandardConsole;
+                if (consoleImplementation != null) {
+                    if (quiet) {
+                        consoleImplementation.Quiet = true;
+                    } else {
+                        consoleImplementation.CurrentSeverityLevel = StandardConsole.Severity.Debug;
+                    }
+                }
             }
 
             PackagesFolder.InstallPackages(packagesFolder, packages.ToArray());
