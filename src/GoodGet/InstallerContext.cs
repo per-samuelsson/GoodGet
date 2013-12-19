@@ -1,6 +1,5 @@
 ﻿
 using Modules;
-using System;
 using System.Collections.Generic;
 
 namespace GoodGet {
@@ -30,7 +29,7 @@ namespace GoodGet {
 
             console.WriteLine(
                 Rank.Debug, 
-                "Begin checking {0} packages from \"{1}\" targetting {2}", packages.Length, installer.Feed.DisplayName, folder.Path
+                "Begin checking {0} packages from \"{1}\" against {2}", packages.Length, installer.Feed.DisplayName, folder.Path
                 );
 
             var installedPackages = got.Get(packages);
@@ -52,23 +51,49 @@ namespace GoodGet {
             // Note: Do it serialized in this first version.
 
             var updates = updateCandidates.ToArray();
-            var currents = (Package[])updates.Clone();
+            var currents = updates.Clone<Package>();
             var outdatedPackages = updateAuthority.CheckForUpdates(updates);
 
-            foreach (var install in freshInstalls) {
-                var installed = installer.Install(folder, install);
-                got.Save(installed);
+            if (freshInstalls.Count > 0) {
+                console.WriteLine(
+                    Rank.Debug,
+                    "Begin installing {0} packages from \"{1}\" into {2}...", freshInstalls.Count, installer.Feed.DisplayName, folder.Path
+                );
+
+                foreach (var install in freshInstalls) {
+                    console.WriteLine("Installing {0} from \"{1}\" into {2}...", install.Id, installer.Feed.DisplayName, folder.Path);
+                    var installed = installer.Install(folder, install);
+                    got.Save(installed);
+                    console.WriteLine("Done (Version {0} installed)", installed.Version);
+                }
+
+                console.WriteLine(
+                    Rank.Debug,
+                    "Done installing {0} packages from \"{1}\" into {2}", freshInstalls.Count, installer.Feed.DisplayName, folder.Path
+                );
             }
 
             if (outdatedPackages > 0) {
+                console.WriteLine(
+                    Rank.Debug,
+                    "Begin updating {0} packages from \"{1}\" in {2}", freshInstalls.Count, installer.Feed.DisplayName, folder.Path
+                );
+
                 for (int i = 0; i < updates.Length; i++) {
                     var update = updates[i];
                     var current = currents[i];
                     if (update.Version == null || update.Version != current.Version) {
+                        console.WriteLine("Updating {0} from \"{1}\" in {2}...", current.Id, installer.Feed.DisplayName, folder.Path);
                         var installed = installer.Install(folder, update);
                         got.Save(installed);
+                        console.WriteLine("Done ({0} -> {1})", current.Version, installed.Version);
                     }
                 }
+
+                console.WriteLine(
+                    Rank.Debug,
+                    "Done updating {0} packages from \"{1}\" in {2}", freshInstalls.Count, installer.Feed.DisplayName, folder.Path
+                );
             }
 
             console.WriteLine(
