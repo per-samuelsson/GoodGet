@@ -28,7 +28,10 @@ namespace GoodGet {
             var freshInstalls = new List<Package>();
             var updateCandidates = new List<Package>();
 
-            console.WriteLine("Installing {0} packages from {1} to {2}", packages.Length, installer.Feed.DisplayName, folder.Path);
+            console.WriteLine(
+                Rank.Debug, 
+                "Begin checking {0} packages from \"{1}\" targetting {2}", packages.Length, installer.Feed.DisplayName, folder.Path
+                );
 
             var installedPackages = got.Get(packages);
 
@@ -67,6 +70,16 @@ namespace GoodGet {
                     }
                 }
             }
+
+            console.WriteLine(
+                Rank.Debug, 
+                "Finished checking {0} packages from \"{1}\" targetting {2}; {3} updated, {4} installed", 
+                packages.Length, 
+                installer.Feed.DisplayName, 
+                folder.Path,
+                outdatedPackages,
+                freshInstalls.Count
+                );
 
             return outdatedPackages > 0 || freshInstalls.Count > 0;
         }
