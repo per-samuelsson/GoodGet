@@ -45,6 +45,9 @@
     <Compile Include="Feed.cs" />
     <Compile Include="FeedPackages.cs" />
     <Compile Include="IConsole\IConsole.cs" />
+    <Compile Include="IConsole\StandardConsole.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="IGot\GotFolder.cs" />
     <Compile Include="IInstaller\FlowDiagnosticInstaller.cs" />
     <Compile Include="IInstaller\IInstaller.cs" />
