@@ -6,7 +6,7 @@ namespace GoodGet {
     /// content to the standard console streams (stdout, stderr).
     /// </summary>
     internal sealed class StandardConsole : IConsole {
-        static class Severity {
+        internal static class Severity {
             public const int Debug = 0;
             public const int Info = 1;
             public const int Notice = 2;
