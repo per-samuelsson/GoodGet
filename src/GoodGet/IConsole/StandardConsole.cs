@@ -1,19 +1,12 @@
 ﻿using System;
 
 namespace GoodGet {
+
     /// <summary>
     /// Implements the <see cref="IConsole"/> interface by writing
     /// content to the standard console streams (stdout, stderr).
     /// </summary>
     internal sealed class StandardConsole : IConsole {
-        internal static class Severity {
-            public const int Debug = 0;
-            public const int Info = 1;
-            public const int Notice = 2;
-            public const int Warning = 3;
-            public const int Error = 4;
-        }
-
         /// <summary>
         /// Gets or sets a value instructing the console to
         /// omit any output written.
@@ -31,7 +24,7 @@ namespace GoodGet {
 
         /// <inheritdoc/>
         void IConsole.WriteLine(string format, params object[] args) {
-            WriteLineToConsole(Severity.Info, format, args);
+            WriteLineToConsole(Rank.Info, format, args);
         }
 
         /// <inheritdoc/>
@@ -42,7 +35,7 @@ namespace GoodGet {
         void WriteLineToConsole(int severity, string format, params object[] args) {
             if (severity >= CurrentSeverityLevel) {
                 Console.WriteLine(format, args);
-                if (severity == Severity.Error) {
+                if (severity == Rank.Error) {
                     Console.Error.WriteLine(format, args);
                 }
             }

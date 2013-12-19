@@ -59,7 +59,7 @@ namespace GoodGet {
                     if (quiet) {
                         consoleImplementation.Quiet = true;
                     } else {
-                        consoleImplementation.CurrentSeverityLevel = StandardConsole.Severity.Debug;
+                        consoleImplementation.CurrentSeverityLevel = Rank.Debug;
                     }
                 }
             }
