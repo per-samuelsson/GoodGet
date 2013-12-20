@@ -8,6 +8,8 @@ namespace ContinuousPackageVersioning {
     /// Expose the core API of the Continuous Package Versioning algorithm.
     /// </summary>
     public sealed class Version {
+        static Regex cpvPrereleaseRegex = new Regex(@"\.(\d{5})\z");
+
         /// <summary>
         /// The stable part of the CPV/SemVer version.
         /// </summary>
@@ -36,14 +38,8 @@ namespace ContinuousPackageVersioning {
         public static Version Parse(string version) {
             string stable, prerelease;
             SplitStableFromPrerelease(version, out stable, out prerelease);
-
-            var r = new Regex(@"\.(\d{5})\z");
-            var matches = r.Matches(prerelease);
-
-            var cpvWithDot = matches[0].Value;
-            prerelease = prerelease.Substring(0, prerelease.Length - cpvWithDot.Length);
-            
-            return new Version(stable, prerelease, cpvWithDot.Substring(1));
+            var tokens = DoRegexSplitOfPrerelease(prerelease);
+            return new Version(stable, tokens[0], tokens[1]);
         }
 
         /// <summary>
@@ -132,10 +128,21 @@ namespace ContinuousPackageVersioning {
             return true;
         }
 
-        static bool IsValidPrereleaseVersion(string version) {
-            // Eventually, do this verification too.
-            // TODO:
+        static bool IsValidPrereleaseVersion(string prerelease) {
+            try {
+                DoRegexSplitOfPrerelease(prerelease);
+            } catch {
+                return false;
+            }
             return true;
+        }
+
+        static string[] DoRegexSplitOfPrerelease(string prerelease) {
+            var tokens = cpvPrereleaseRegex.Split(prerelease);
+            if (tokens.Length != 3 || tokens[2] != string.Empty) {
+                throw new ArgumentOutOfRangeException("Prerelease part is not CPV compatible: {0}", prerelease);
+            }
+            return tokens;
         }
     }
 }
