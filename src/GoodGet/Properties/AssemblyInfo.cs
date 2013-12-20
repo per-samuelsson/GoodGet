@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("GoodGet")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Continous integration NuGet variant")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Microsoft")]
+[assembly: AssemblyCompany("Starcounter")]
 [assembly: AssemblyProduct("GoodGet")]
-[assembly: AssemblyCopyright("Copyright © Microsoft 2013")]
+[assembly: AssemblyCopyright("Copyright © Starcounter 2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -32,5 +32,16 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("1.0.0")]
+[assembly: AssemblyFileVersion("1.0.0")]
+
+// The current, "real" version. Will be target to the
+// CI build SemVer extension, and generate packages like
+// <this_value>.[n].[time] where [n] is an integer that
+// increase for every version we publish, and [time] is
+// the time the package was built/packaged. This will ONLY
+// apply as long as we are in prerelease mode. After that,
+// the package/assembly will be stable enough to only be
+// updated manually.
+// Example extended SemVer: 1.0.0-alpha.123.20131220T065113
+[assembly: AssemblyInformationalVersionAttribute("1.0.0-alpha")]
