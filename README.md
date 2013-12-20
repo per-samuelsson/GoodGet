@@ -108,6 +108,10 @@ Questions or feedback
 =====================
 per [at] starcounter.com
 
+or
+
+file an [issue](https://github.com/per-samuelsson/GoodGet/issues/new).
+
 Limitations
 ===========
 Check [here](https://github.com/per-samuelsson/GoodGet/issues?labels=enhancement&page=1&state=open).
