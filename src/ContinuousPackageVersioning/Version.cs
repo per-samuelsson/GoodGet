@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Text.RegularExpressions;
 
 namespace ContinuousPackageVersioning {
 
@@ -27,6 +28,25 @@ namespace ContinuousPackageVersioning {
         }
 
         /// <summary>
+        /// Converts the CPV-based <paramref name="version"/> string to
+        /// its corresponding <see cref="Version"/> instance.
+        /// </summary>
+        /// <param name="version">The version string to parse.</param>
+        /// <returns>A <see cref="Version"/> instance.</returns>
+        public static Version Parse(string version) {
+            string stable, prerelease;
+            SplitStableFromPrerelease(version, out stable, out prerelease);
+
+            var r = new Regex(@"\.(\d{5})\z");
+            var matches = r.Matches(prerelease);
+
+            var cpvWithDot = matches[0].Value;
+            prerelease = prerelease.Substring(0, prerelease.Length - cpvWithDot.Length);
+            
+            return new Version(stable, prerelease, cpvWithDot.Substring(1));
+        }
+
+        /// <summary>
         /// Gets the next version of a CPV-compatible version string.
         /// </summary>
         /// <param name="specified">The version as specified in its
@@ -44,6 +64,14 @@ namespace ContinuousPackageVersioning {
 
             // Do our thing
             // TODO:
+
+            // Here is a regex to see a given current CPV suffix is
+            // actually valid:
+            // var r = new Regex(@"\.(\d{5})\z");
+            // r.IsMatch("per.00001"): // True
+            // r.IsMatch("per.00001a"): // False
+            // r.IsMatch("per00001"): // False
+
             throw new NotImplementedException();
         }
         
