@@ -58,16 +58,20 @@ namespace ContinuousPackageVersioning {
             } else if (string.IsNullOrWhiteSpace(current)) {
                 // Just validate specified looks right and apply the
                 // starting number to it.
-                // TODO:
                 SplitStableFromPrerelease(specified, out stable, out prerelease);
                 return new Version(stable, prerelease, startingVersion);
 
             } else if (!string.IsNullOrWhiteSpace(specified)) {
                 // Both the specified and the current one are specified.
                 // We should check them, to see if we need to restart.
-                // TODO:
+                if (!current.StartsWith(specified)) {
+                    SplitStableFromPrerelease(specified, out stable, out prerelease);
+                    return new Version(stable, prerelease, startingVersion);
+                }
             }
 
+            // Always emanate from the current number. All we needed from
+            // the specified one is now passed.
             // The valid pattern
             // [major].[minor].[patch]-[prerelease][.nnnnn]
 
