@@ -8,6 +8,7 @@ namespace ContinuousPackageVersioning {
     /// Expose the core API of the Continuous Package Versioning algorithm.
     /// </summary>
     public sealed class Version {
+        const string startingVersion = ".00000";
         static Regex cpvPrereleaseRegex = new Regex(@"\.(\d{5})\z");
 
         /// <summary>
