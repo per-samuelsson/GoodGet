@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace ContinuousPackageVersioning {
@@ -8,7 +9,7 @@ namespace ContinuousPackageVersioning {
     /// Expose the core API of the Continuous Package Versioning algorithm.
     /// </summary>
     public sealed class Version {
-        const string startingVersion = ".00000";
+        const string startingVersion = "00000";
         static Regex cpvPrereleaseRegex = new Regex(@"\.(\d{5})\z");
 
         /// <summary>
@@ -50,14 +51,25 @@ namespace ContinuousPackageVersioning {
         /// 'naked' form, e.g. "1.2.3-alpha".</param>
         /// <param name="current">The current version, if such exist.</param>
         /// <returns>The CPV version following the current one.</returns>
-        public static Version GetNext(string specified, string current) {
+        public static Version GetNext(string specified, string current = null) {
+            string stable, prerelease;
             if (string.IsNullOrWhiteSpace(specified) && string.IsNullOrWhiteSpace(current)) {
                 throw new ArgumentNullException("specified", "Specify at least either 'version' or 'current'.");
             } else if (string.IsNullOrWhiteSpace(current)) {
                 // Just validate specified looks right and apply the
                 // starting number to it.
                 // TODO:
+                SplitStableFromPrerelease(specified, out stable, out prerelease);
+                return new Version(stable, prerelease, startingVersion);
+
+            } else if (!string.IsNullOrWhiteSpace(specified)) {
+                // Both the specified and the current one are specified.
+                // We should check them, to see if we need to restart.
+                // TODO:
             }
+
+            // The valid pattern
+            // [major].[minor].[patch]-[prerelease][.nnnnn]
 
             // Do our thing
             // TODO:
