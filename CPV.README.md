@@ -1,8 +1,8 @@
 Continuous Package Versioning (CPV)
 ===================================
-Continuous Package Versioning is an auto-incrementing version algorithm based on, and not
-violating, SemVer (semver.org), designed for continuous builds. It exploiting the capabilities
-of the prerelease string, and hence is only applicable to version numbers that
+Continuous Package Versioning is an **auto-incrementing version** algorithm based on, and not
+violating, SemVer (semver.org), designed for continuous builds. It **exploiting** the capabilities
+of the **prerelease string**, and hence is only applicable to version numbers that
 
 1. is based on SemVer
 2. represents a prerelease artifact
