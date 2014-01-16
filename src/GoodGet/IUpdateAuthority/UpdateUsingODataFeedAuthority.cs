@@ -51,6 +51,11 @@ namespace GoodGet {
             //     3.2) Get entry based on name and '$filter' the feed for
             //          the one that is the latest, and compare the version
             //          we get back to "got".
+            //     Examples: 
+            //       https://www.myget.org/F/Starcounter/Packages?$filter=Id eq 'Starcounter.ErrorCodes' and IsAbsoluteLatestVersion
+            //       https://www.myget.org/F/Starcounter/Packages?$filter=Id eq 'Starcounter.ErrorCodes' and IsAbsoluteLatestVersion&$select=Version
+            //       https://www.nuget.org/api/v2/Packages?$filter=Id eq 'GoodGet' and IsAbsoluteLatestVersion
+            //       https://www.nuget.org/api/v2/Packages?$filter=Id eq 'GoodGet' and IsAbsoluteLatestVersion&$select=Version
             //     3.3) Don't get JSON - faster with other data?
             //     3.4) Use 'select' feature to only fetch the actual
             //          "IsAbsoluteLatestVersion" property.
