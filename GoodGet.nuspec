@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>GoodGet</id>
+    <version>1.0.0</version>
+    <authors>Starcounter</authors>
+    <owners>Starcounter</owners>
+    <projectUrl>https://github.com/per-samuelsson/GoodGet</projectUrl>
+    <description>Continuous integration NuGet</description>
+    <copyright>Copyright 2014</copyright>
+    <tags>Starcounter NuGet Packages Continuous-integration</tags>
+  </metadata>
+  <files>
+    <file src="src\GoodGet\bin\Debug\GoodGet.exe" target="tools\GoodGet.exe" /> 
+    <file src="src\ContinuousPackageVersioning\bin\Debug\ContinuousPackageVersioning.exe" target="tools\ContinuousPackageVersioning.exe" />
+  </files>
+</package>
