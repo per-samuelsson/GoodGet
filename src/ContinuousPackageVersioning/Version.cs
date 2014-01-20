@@ -61,6 +61,16 @@ namespace ContinuousPackageVersioning {
         }
 
         /// <summary>
+        /// Increase the current versions CPV sequence with one, and
+        /// returns a new version representing the increase.
+        /// </summary>
+        /// <returns>A new version with a CPV sequence increasing that
+        /// of the current instance with 1.</returns>
+        public Version Next() {
+            return new Version(this.Stable, this.Prerelease, ParseAndIncreaseCPVVersionString(this.CPVVersion));
+        }
+
+        /// <summary>
         /// Gets the next version of a CPV-compatible version string.
         /// </summary>
         /// <param name="specified">The version as specified in its
