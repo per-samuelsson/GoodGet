@@ -9,22 +9,24 @@ namespace ContinuousPackageVersioning {
     /// Expose the core API of the Continuous Package Versioning algorithm.
     /// </summary>
     public sealed class Version {
-        const string startingVersion = "00000";
-        const int highestCpvNumber = 99999;
-        static Regex cpvPrereleaseRegex = new Regex(@"\.(\d{5})\z");
+        const string startingSequence = "00000";
+        const int maxSequence = 99999;
+        static Regex sequenceRegex = new Regex(@"\.(\d{5})\z");
 
         /// <summary>
         /// The stable part of the CPV/SemVer version.
         /// </summary>
         public string Stable { get; private set; }
+
         /// <summary>
         /// The prerelease part of the CPV/SemVer version.
         /// </summary>
         public string Prerelease { get; private set; }
+
         /// <summary>
-        /// The CPV version.
+        /// The CPV version sequence number.
         /// </summary>
-        public string CPVVersion { get; private set; }
+        public string Sequence { get; private set; }
 
         /// <summary>
         /// Initialize a <see cref="Version"/> based on a given
@@ -38,13 +40,13 @@ namespace ContinuousPackageVersioning {
             SplitStableFromPrerelease(staticVersion, out stable, out pre);
             this.Stable = stable;
             this.Prerelease = pre;
-            this.CPVVersion = startingVersion;
+            this.Sequence = startingSequence;
         }
 
-        private Version(string stable, string prerelease, string cpvVersion) {
+        private Version(string stable, string prerelease, string sequence) {
             Stable = stable;
             Prerelease = prerelease;
-            CPVVersion = cpvVersion;
+            Sequence = sequence;
         }
 
         /// <summary>
@@ -54,10 +56,10 @@ namespace ContinuousPackageVersioning {
         /// <param name="version">The version string to parse.</param>
         /// <returns>A <see cref="Version"/> instance.</returns>
         public static Version Parse(string version) {
-            string stable, prerelease, cpv;
+            string stable, prerelease, seq;
             SplitStableFromPrerelease(version, out stable, out prerelease);
-            SplitCPVFromPrerelease(prerelease, out prerelease, out cpv);
-            return new Version(stable, prerelease, cpv);
+            SplitSequenceFromPrerelease(prerelease, out prerelease, out seq);
+            return new Version(stable, prerelease, seq);
         }
 
         /// <summary>
@@ -67,39 +69,39 @@ namespace ContinuousPackageVersioning {
         /// <returns>A new version with a CPV sequence increasing that
         /// of the current instance with 1.</returns>
         public Version Next() {
-            return new Version(this.Stable, this.Prerelease, ParseAndIncreaseCPVVersionString(this.CPVVersion));
+            return new Version(this.Stable, this.Prerelease, ParseAndIncreaseSequence(this.Sequence));
         }
 
         /// <summary>
         /// Gets the next version of a CPV-compatible version string.
         /// </summary>
         /// <param name="specified">The version as specified in its
-        /// 'naked' form, e.g. "1.2.3-alpha".</param>
+        /// static form, e.g. "1.2.3-alpha".</param>
         /// <param name="current">The current version, if such exist.</param>
         /// <returns>The CPV version following the current one.</returns>
         public static Version GetNext(string specified, string current = null) {
-            string stable, prerelease, cpv;
+            string stable, prerelease, seq;
             if (string.IsNullOrWhiteSpace(specified) && string.IsNullOrWhiteSpace(current)) {
                 throw new ArgumentNullException("specified", "Specify at least either 'version' or 'current'.");
             } else if (string.IsNullOrWhiteSpace(current)) {
                 // Just validate specified looks right and apply the
                 // starting number to it.
                 SplitStableFromPrerelease(specified, out stable, out prerelease);
-                return new Version(stable, prerelease, startingVersion);
+                return new Version(stable, prerelease, startingSequence);
 
             } else if (!string.IsNullOrWhiteSpace(specified)) {
                 // Both the specified and the current one are specified.
                 // We should check them, to see if we need to restart.
                 if (!current.StartsWith(specified)) {
                     SplitStableFromPrerelease(specified, out stable, out prerelease);
-                    return new Version(stable, prerelease, startingVersion);
+                    return new Version(stable, prerelease, startingSequence);
                 }
             }
 
             SplitStableFromPrerelease(current, out stable, out prerelease);
-            SplitCPVFromPrerelease(prerelease, out prerelease, out cpv);
-            cpv = ParseAndIncreaseCPVVersionString(cpv);
-            return new Version(stable, prerelease, cpv);
+            SplitSequenceFromPrerelease(prerelease, out prerelease, out seq);
+            seq = ParseAndIncreaseSequence(seq);
+            return new Version(stable, prerelease, seq);
         }
         
         /// <summary>
@@ -150,7 +152,7 @@ namespace ContinuousPackageVersioning {
 
         /// <inheritdoc/>
         public override string ToString() {
-            return Stable + "-" + Prerelease + "." + CPVVersion;
+            return Stable + "-" + Prerelease + "." + Sequence;
         }
 
         static bool IsValidStableSemVerVersion(string version) {
@@ -162,30 +164,31 @@ namespace ContinuousPackageVersioning {
         static bool IsValidPrereleaseVersion(string prerelease) {
             try {
                 string a, b;
-                SplitCPVFromPrerelease(prerelease, out a, out b);
+                SplitSequenceFromPrerelease(prerelease, out a, out b);
             } catch {
                 return false;
             }
             return true;
         }
 
-        static void SplitCPVFromPrerelease(string prereleaseWithCPV, out string prerelease, out string cpv) {
-            var tokens = cpvPrereleaseRegex.Split(prereleaseWithCPV);
+        static void SplitSequenceFromPrerelease(string prereleaseWithCPV, out string prerelease, out string seq) {
+            var tokens = sequenceRegex.Split(prereleaseWithCPV);
             if (tokens.Length != 3 || tokens[2] != string.Empty) {
                 throw new ArgumentOutOfRangeException("Prerelease part is not CPV compatible: {0}", prereleaseWithCPV);
             }
             prerelease = tokens[0];
-            cpv = tokens[1];
+            seq = tokens[1];
         }
 
-        static string ParseAndIncreaseCPVVersionString(string cpvString) {
-            var cpv = int.Parse(cpvString);
-            if (++cpv > highestCpvNumber) {
+        static string ParseAndIncreaseSequence(string sequence) {
+            var seq = int.Parse(sequence);
+            if (++seq > maxSequence) {
                 // Series exhausted.
                 // TODO:
-                throw new ArithmeticException();
+                throw new ArgumentOutOfRangeException(
+                    string.Format("The sequence is exhaused. The maximum sequence for a given version is {0}", maxSequence));
             }
-            return string.Format("{0:D5}", cpv);
+            return string.Format("{0:D5}", seq);
         }
     }
 }
