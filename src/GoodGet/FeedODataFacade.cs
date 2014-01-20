@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Web.Script.Serialization;
 
 namespace GoodGet {
     /// <summary>
@@ -26,6 +28,14 @@ namespace GoodGet {
         }
 
         /// <summary>
+        /// Gets the <see cref="IRestClient"/> this facade access use
+        /// when accessing the underlying OData.
+        /// </summary>
+        public IRestClient Client {
+            get { return client; }
+        }
+
+        /// <summary>
         /// Gets a value indicating if the given version is the latest
         /// version of the specified package.
         /// </summary>
@@ -35,7 +45,39 @@ namespace GoodGet {
         /// latest version, based on the underlying OData; <c>false</c>
         /// otherwise.</returns>
         public bool IsLatestVersion(string packageId, string version) {
-            throw new NotImplementedException();
+            #region Ramblings
+            // Since this is the most performance-critical spot in
+            // GoodGet, we should invest most of our time trying
+            // different alternatives here to make things snappy.
+            // Here's a list of things:
+            //   1) Different JSON-parsers / deserializers
+            //   2) Different REST/HTTP clients
+            //   3) Different OData approaches:
+            //     3.1) Get entry based on name and the version "got", then
+            //          check "IsAbsoluteLatestVersion" locally.
+            //     3.2) Get entry based on name and '$filter' the feed for
+            //          the one that is the latest, and compare the version
+            //          we get back to "got".
+            //     Examples: 
+            //       https://www.myget.org/F/Starcounter/Packages?$filter=Id eq 'Starcounter.ErrorCodes' and IsAbsoluteLatestVersion
+            //       https://www.myget.org/F/Starcounter/Packages?$filter=Id eq 'Starcounter.ErrorCodes' and IsAbsoluteLatestVersion&$select=Version
+            //       https://www.nuget.org/api/v2/Packages?$filter=Id eq 'GoodGet' and IsAbsoluteLatestVersion
+            //       https://www.nuget.org/api/v2/Packages?$filter=Id eq 'GoodGet' and IsAbsoluteLatestVersion&$select=Version
+            //     3.3) Don't get JSON - faster with other data?
+            //     3.4) Use 'select' feature to only fetch the actual
+            //          "IsAbsoluteLatestVersion" property.
+            //   4) Check each of (3) with different number of packages in
+            //      the feed - does it matter if its 5 or 500?
+            //   5) Check if we can do things in parallel (using PTL).
+            #endregion
+
+            var uri = string.Format("{0}(Id='{1}',Version='{2}')?$select=IsAbsoluteLatestVersion", Feed.PackagesUri, packageId, version);
+            var content = client.GetJSONString(uri);
+
+            var x = new JavaScriptSerializer();
+            var t = x.Deserialize<Dictionary<string, object>>(content);
+            var d = t["d"] as IDictionary<string, object>;
+            return (bool)d["IsAbsoluteLatestVersion"];
         }
 
         /// <summary>
