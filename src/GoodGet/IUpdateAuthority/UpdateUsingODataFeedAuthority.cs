@@ -10,8 +10,7 @@ namespace GoodGet {
     /// versions using the OData protocol.
     /// </summary>
     internal sealed class UpdateUsingODataFeedAuthority : IUpdateAuthority {
-        readonly Feed feed;
-        readonly IRestClient client;
+        readonly FeedODataFacade odataFeed;
         readonly TimeSpan? recencyDelay;
 
         /// <summary>
@@ -23,14 +22,13 @@ namespace GoodGet {
         /// <param name="recencyDelay">A delay to use that limits the check for
         /// an update to a certain recency.</param>
         public UpdateUsingODataFeedAuthority(Feed feed, IRestClient restClient, TimeSpan? recencyDelay = null) {
-            this.feed = feed;
-            this.client = restClient;
+            odataFeed = new FeedODataFacade(restClient);
             this.recencyDelay = recencyDelay;
         }
 
         /// <inheritdoc/>
         Feed IUpdateAuthority.Feed {
-            get { return feed; }
+            get { return odataFeed.Feed; }
         }
 
         /// <inheritdoc/>
@@ -39,36 +37,9 @@ namespace GoodGet {
                 throw new NotImplementedException("recencyDelay");
             }
 
-            // Since this is the most performance-critical spot in
-            // GoodGet, we should invest most of our time trying
-            // different alternatives here to make things snappy.
-            // Here's a list of things:
-            //   1) Different JSON-parsers / deserializers
-            //   2) Different REST/HTTP clients
-            //   3) Different OData approaches:
-            //     3.1) Get entry based on name and the version "got", then
-            //          check "IsAbsoluteLatestVersion" locally.
-            //     3.2) Get entry based on name and '$filter' the feed for
-            //          the one that is the latest, and compare the version
-            //          we get back to "got".
-            //     Examples: 
-            //       https://www.myget.org/F/Starcounter/Packages?$filter=Id eq 'Starcounter.ErrorCodes' and IsAbsoluteLatestVersion
-            //       https://www.myget.org/F/Starcounter/Packages?$filter=Id eq 'Starcounter.ErrorCodes' and IsAbsoluteLatestVersion&$select=Version
-            //       https://www.nuget.org/api/v2/Packages?$filter=Id eq 'GoodGet' and IsAbsoluteLatestVersion
-            //       https://www.nuget.org/api/v2/Packages?$filter=Id eq 'GoodGet' and IsAbsoluteLatestVersion&$select=Version
-            //     3.3) Don't get JSON - faster with other data?
-            //     3.4) Use 'select' feature to only fetch the actual
-            //          "IsAbsoluteLatestVersion" property.
-            //   4) Check each of (3) with different number of packages in
-            //      the feed - does it matter if its 5 or 500?
-            //   5) Check if we can do things in parallel (using PTL).
-
             int count = 0;
             foreach (var p in packages) {
-                var uri = string.Format("{0}(Id='{1}',Version='{2}')?$select=IsAbsoluteLatestVersion", feed.PackagesUri, p.Id, p.Version);
-                var content = client.GetJSONString(uri);
-
-                var isLatest = ParseIsLatestUsingJSONWithOnlyDotNet(content);
+                var isLatest = odataFeed.IsLatestVersion(p.Id, p.Version);
                 if (!isLatest) {
                     count++;
                     p.Version = null;
@@ -76,15 +47,6 @@ namespace GoodGet {
             }
 
             return count;
-        }
-
-        static bool ParseIsLatestUsingJSONWithOnlyDotNet(string json) {
-            // Simplest possible to start with, using just the
-            // bits we've got in the .NET framework.
-            var x = new JavaScriptSerializer();
-            var t = x.Deserialize<Dictionary<string, object>>(json);
-            var d = t["d"] as IDictionary<string, object>;
-            return (bool) d["IsAbsoluteLatestVersion"];
         }
     }
 }
