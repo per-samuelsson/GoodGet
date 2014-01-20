@@ -17,6 +17,16 @@ namespace GoodGet {
         };
 
         /// <summary>
+        /// Reference to a <see cref="Feed"/> that represent the Starcounter
+        /// feed on MyGet.
+        /// </summary>
+        public static readonly Feed StarcounterOnMyGet = new Feed() {
+            Uri = "https://www.myget.org/F/starcounter/",
+            PackagesUri = "https://www.myget.org/F/Starcounter/Packages",
+            DisplayName = "Starcounter feed for CI- and nighly builds."
+        };
+
+        /// <summary>
         /// The Uri of the source itself, as used in standard
         /// NuGet lingo, e.g. when doing command-line nuget.exe
         /// 'install' and specifying '-source'.
