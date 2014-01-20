@@ -26,6 +26,21 @@ namespace ContinuousPackageVersioning {
         /// </summary>
         public string CPVVersion { get; private set; }
 
+        /// <summary>
+        /// Initialize a <see cref="Version"/> based on a given
+        /// static version, i.e. a version that includes the
+        /// required stable- and prerelease parts of a CPV-version,
+        /// but that excludes the sequence.
+        /// </summary>
+        /// <param name="staticVersion">The static version.</param>
+        public Version(string staticVersion) {
+            string stable, pre;
+            SplitStableFromPrerelease(staticVersion, out stable, out pre);
+            this.Stable = stable;
+            this.Prerelease = pre;
+            this.CPVVersion = startingVersion;
+        }
+
         private Version(string stable, string prerelease, string cpvVersion) {
             Stable = stable;
             Prerelease = prerelease;
