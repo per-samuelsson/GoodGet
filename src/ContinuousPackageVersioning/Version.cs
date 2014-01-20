@@ -6,7 +6,9 @@ using System.Text.RegularExpressions;
 namespace ContinuousPackageVersioning {
 
     /// <summary>
-    /// Expose the core API of the Continuous Package Versioning algorithm.
+    /// Represents a version that is compatible with the Continuous
+    /// Package Versioning format, allowing such versions to be easily
+    /// accessed in .NET programming languages.
     /// </summary>
     public sealed class Version {
         const string startingSequence = "00000";
@@ -14,17 +16,26 @@ namespace ContinuousPackageVersioning {
         static Regex sequenceRegex = new Regex(@"\.(\d{5})\z");
 
         /// <summary>
-        /// The stable part of the CPV/SemVer version.
+        /// Gets the stable part of the current version.
         /// </summary>
         public string Stable { get; private set; }
 
         /// <summary>
-        /// The prerelease part of the CPV/SemVer version.
+        /// Gets the prerelease part of the current version.
         /// </summary>
         public string Prerelease { get; private set; }
 
         /// <summary>
-        /// The CPV version sequence number.
+        /// Gets the static part of the current version.
+        /// </summary>
+        public string Static {
+            get {
+                return Stable + "-" + Prerelease;
+            }
+        }
+
+        /// <summary>
+        /// Gets the sequence part of the current version.
         /// </summary>
         public string Sequence { get; private set; }
 
@@ -73,35 +84,30 @@ namespace ContinuousPackageVersioning {
         }
 
         /// <summary>
-        /// Gets the next version of a CPV-compatible version string.
+        /// Determines the next CPV version based on the values of the
+        /// current version and the one specified as 'last'. The last
+        /// version will normally be the version last published and is
+        /// to be the starting point for the algorithm - if not the
+        /// static versions of the current one and the last deviates.
+        /// If static versions doesn't match, a new sequence will be
+        /// started.
         /// </summary>
-        /// <param name="specified">The version as specified in its
-        /// static form, e.g. "1.2.3-alpha".</param>
-        /// <param name="current">The current version, if such exist.</param>
-        /// <returns>The CPV version following the current one.</returns>
-        public static Version GetNext(string specified, string current = null) {
-            string stable, prerelease, seq;
-            if (string.IsNullOrWhiteSpace(specified) && string.IsNullOrWhiteSpace(current)) {
-                throw new ArgumentNullException("specified", "Specify at least either 'version' or 'current'.");
-            } else if (string.IsNullOrWhiteSpace(current)) {
-                // Just validate specified looks right and apply the
-                // starting number to it.
-                SplitStableFromPrerelease(specified, out stable, out prerelease);
-                return new Version(stable, prerelease, startingSequence);
-
-            } else if (!string.IsNullOrWhiteSpace(specified)) {
-                // Both the specified and the current one are specified.
-                // We should check them, to see if we need to restart.
-                if (!current.StartsWith(specified)) {
-                    SplitStableFromPrerelease(specified, out stable, out prerelease);
-                    return new Version(stable, prerelease, startingSequence);
-                }
+        /// <param name="last">The last version, to base the new one
+        /// on if the static part of both versions match.</param>
+        /// <returns>A new version with a CPV sequence increasing that
+        /// of the last one with 1; or a version starting a fresh
+        /// sequence if the static versions deviate.</returns>
+        public Version Next(string last) {
+            if (string.IsNullOrWhiteSpace(last)) {
+                throw new ArgumentNullException("current");
             }
 
-            SplitStableFromPrerelease(current, out stable, out prerelease);
-            SplitSequenceFromPrerelease(prerelease, out prerelease, out seq);
-            seq = ParseAndIncreaseSequence(seq);
-            return new Version(stable, prerelease, seq);
+            var c = Parse(last);
+            if (c.Static.Equals(this.Static, StringComparison.InvariantCultureIgnoreCase)) {
+                return c.Next();
+            }
+
+            return new Version(this.Stable, this.Prerelease, startingSequence);
         }
         
         /// <summary>
