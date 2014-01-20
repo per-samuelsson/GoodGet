@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Web.Script.Serialization;
 
@@ -90,7 +91,20 @@ namespace GoodGet {
         /// if the package does not exist or reveal such information.
         /// </returns>
         public string GetLatestVersion(string packageId) {
-            throw new NotImplementedException();
+            var uri = string.Format("{0}?$filter=Id eq '{1}' and IsAbsoluteLatestVersion&$select=Version", 
+                Feed.PackagesUri, packageId);
+            var content = client.GetJSONString(uri);
+
+            var x = new JavaScriptSerializer();
+            var t = x.Deserialize<Dictionary<string, object>>(content);
+            var d = t["d"] as IDictionary<string, object>;
+            var results = d["results"] as ArrayList;
+            if (results == null || results.Count == 0) {
+                return null;
+            }
+
+            var props = results[0] as IDictionary<string, object>;
+            return (string) props["Version"];
         }
     }
 }
